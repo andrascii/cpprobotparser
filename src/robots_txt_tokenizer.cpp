@@ -7,7 +7,7 @@ namespace cpprobotparser
 namespace
 {
 
-const std::map<RobotsTxtToken, std::string_view> s_tokenToString =
+const std::map<RobotsTxtToken, std::string> s_tokenToString =
 {
     { RobotsTxtToken::TokenUserAgent, "user-agent" },
     { RobotsTxtToken::TokenAllow, "allow" },
@@ -20,17 +20,17 @@ const std::map<RobotsTxtToken, std::string_view> s_tokenToString =
     { RobotsTxtToken::TokenStringDelimeter, ":" }
 };
 
-const std::map<std::string_view, RobotsTxtToken> s_stringToToken =
+const std::map<std::string, RobotsTxtToken> s_stringToToken =
 {
-    { "user-agent", RobotsTxtToken::TokenUserAgent },
-    { "allow", RobotsTxtToken::TokenAllow },
-    { "disallow", RobotsTxtToken::TokenDisallow },
-    { "sitemap", RobotsTxtToken::TokenSitemap },
-    { "host", RobotsTxtToken::TokenHost },
-    { "crawl-delay", RobotsTxtToken::TokenCrawlDelay },
-    { "clean-param", RobotsTxtToken::TokenCleanParam },
-    { "#", RobotsTxtToken::TokenCommentary },
-    { ":", RobotsTxtToken::TokenStringDelimeter }
+    { s_tokenToString.at(RobotsTxtToken::TokenUserAgent)/*"user-agent"*/, RobotsTxtToken::TokenUserAgent },
+    { s_tokenToString.at(RobotsTxtToken::TokenAllow)/*"allow"*/, RobotsTxtToken::TokenAllow },
+    { s_tokenToString.at(RobotsTxtToken::TokenDisallow)/*"disallow"*/, RobotsTxtToken::TokenDisallow },
+    { s_tokenToString.at(RobotsTxtToken::TokenSitemap)/*"sitemap"*/, RobotsTxtToken::TokenSitemap },
+    { s_tokenToString.at(RobotsTxtToken::TokenHost)/*"host"*/, RobotsTxtToken::TokenHost },
+    { s_tokenToString.at(RobotsTxtToken::TokenCrawlDelay)/*"crawl-delay"*/, RobotsTxtToken::TokenCrawlDelay },
+    { s_tokenToString.at(RobotsTxtToken::TokenCleanParam)/*"clean-param"*/, RobotsTxtToken::TokenCleanParam },
+    { s_tokenToString.at(RobotsTxtToken::TokenCommentary)/*"#"*/, RobotsTxtToken::TokenCommentary },
+    { s_tokenToString.at(RobotsTxtToken::TokenStringDelimeter)/*":"*/, RobotsTxtToken::TokenStringDelimeter }
 };
 
 } // namespace
@@ -47,20 +47,21 @@ bool RobotsTxtTokenizer::isValid() const noexcept
 
 void RobotsTxtTokenizer::tokenize(const std::string& robotsTxtContent)
 {
-    static std::regex s_endOfLine("(\\n|\\r|\\r\\n|\\n\\r)");
-
     StringHelpers::StringList rows = removeCommentaries(
-        StringHelpers::splitString(robotsTxtContent, s_endOfLine, StringHelpers::SkipEmptyParts));
+        StringHelpers::splitString(robotsTxtContent, [](char ch) { return ch == '\n'; }, StringHelpers::SkipEmptyParts));
 
-    UserAgentType userAgentType = UserAgentType::AnyBot;
+    WellKnownUserAgent userAgentType = WellKnownUserAgent::AnyBot;
 
     for (int i = 0; i < rows.size(); ++i)
     {
-        auto[token, tokenValue] = tokenizeRow(rows[i]);
+        std::pair<std::string, std::string> tokenizedRow = tokenizeRow(rows[i]);
 
-        const bool isUserAgentToken = token == s_tokenToString[RobotsTxtToken::TokenUserAgent];
-        const bool isSitemapToken = token == s_tokenToString[RobotsTxtToken::TokenSitemap];
-        const bool isHostToken = token == s_tokenToString[RobotsTxtToken::TokenHost];
+        const std::string token = std::move(tokenizedRow.first);
+        const std::string tokenValue = std::move(tokenizedRow.second);
+
+        const bool isUserAgentToken = token == s_tokenToString.at(RobotsTxtToken::TokenUserAgent);
+        const bool isSitemapToken = token == s_tokenToString.at(RobotsTxtToken::TokenSitemap);
+        const bool isHostToken = token == s_tokenToString.at(RobotsTxtToken::TokenHost);
 
         if (!isUserAgentToken && !isSitemapToken && !isHostToken && i == 0)
         {
@@ -77,18 +78,27 @@ void RobotsTxtTokenizer::tokenize(const std::string& robotsTxtContent)
         }
         else
         {
-            if (userAgentType == UserAgentType::Unknown)
+            if (userAgentType == WellKnownUserAgent::Unknown)
             {
                 continue;
             }
 
-            RobotsTxtToken tokenEnumerator = s_stringToToken.value(token, RobotsTxtToken::TokenUnknown);
+            RobotsTxtToken tokenEnumerator = RobotsTxtToken::TokenUnknown;
+
+            try
+            {
+                tokenEnumerator = s_stringToToken.at(token);
+            }
+            catch (const std::out_of_range&)
+            {
+            }
+
             Tokens& tokens = m_userAgentTokens[userAgentType];
-            tokens.insert(tokenEnumerator, tokenValue);
+            tokens.insert(std::make_pair(tokenEnumerator, tokenValue));
 
             if (tokenEnumerator == RobotsTxtToken::TokenSitemap)
             {
-                if (m_sitemapUrl.isValid())
+                if (!m_sitemapUrl.empty())
                 {
                     //WARNLOG << "Seems that robots.txt file has several sitemaps";
                     continue;
@@ -102,23 +112,42 @@ void RobotsTxtTokenizer::tokenize(const std::string& robotsTxtContent)
     m_validRobotsTxt = true;
 }
 
-QList<QString> RobotsTxtTokenizer::tokenValues(UserAgentType userAgentType, RobotsTxtToken token) const
+std::vector<std::string>
+RobotsTxtTokenizer::tokenValues(WellKnownUserAgent userAgentType, RobotsTxtToken token) const
 {
-    return m_userAgentTokens.contains(userAgentType) ?
-        m_userAgentTokens.value(userAgentType).values(token) : QList<QString>();
+    std::vector<std::string> result;
+
+    try
+    {
+        const Tokens& tokens = m_userAgentTokens.at(userAgentType);
+        const auto rangePair = tokens.equal_range(token);
+
+        std::for_each(rangePair.first, rangePair.second, [&result](const auto& iter)
+        {
+            result.push_back(iter.second);
+        });
+    }
+    catch (const std::out_of_range&)
+    {
+    } // do nothing
+
+    return result;
 }
 
-const Url& RobotsTxtTokenizer::sitemap() const
+const std::string&
+RobotsTxtTokenizer::sitemapUrl() const
 {
     return m_sitemapUrl;
 }
 
-const Url& RobotsTxtTokenizer::originalHostMirror() const
+const std::string&
+RobotsTxtTokenizer::originalHostMirrorUrl() const
 {
     return m_originalHostMirrorUrl;
 }
 
-StringHelpers::StringList RobotsTxtTokenizer::removeCommentaries(const StringHelpers::StringList& strings)
+StringHelpers::StringList
+RobotsTxtTokenizer::removeCommentaries(const StringHelpers::StringList& strings)
 {
     StringHelpers::StringList resultStrings;
 
@@ -137,45 +166,50 @@ StringHelpers::StringList RobotsTxtTokenizer::removeCommentaries(const StringHel
     return resultStrings;
 }
 
-std::pair<std::string, std::string> RobotsTxtTokenizer::tokenizeRow(const QString& row) const
+std::pair<std::string, std::string>
+RobotsTxtTokenizer::tokenizeRow(const std::string& row) const
 {
-	const size_t tokenPartStringDelimeterPosition =
-		row.find(s_tokenToString[RobotsTxtToken::TokenStringDelimeter]);
+    const size_t tokenPartStringDelimeterPosition =
+        row.find(s_tokenToString.at(RobotsTxtToken::TokenStringDelimeter));
 
-	if (tokenPartStringDelimeterPosition == -1)
-	{
-		// invalid row
-		return std::make_pair(std::string(), std::string());
-	}
+    if (tokenPartStringDelimeterPosition == std::string::npos)
+    {
+        // invalid row
+        return std::make_pair(std::string(), std::string());
+    }
 
-	const std::string token = row.left(tokenPartStringDelimeterPosition).trimmed().toLower();
-	const std::string tokenValue = row.right(row.size() - tokenPartStringDelimeterPosition - 1).trimmed().toLower();
+    const std::string token = StringHelpers::trimmed(
+        StringHelpers::toLower(row.substr(0, tokenPartStringDelimeterPosition)));
 
-	return std::make_pair(token, tokenValue);
+    const std::string tokenValue = StringHelpers::trimmed(
+        StringHelpers::toLower(row.substr(tokenPartStringDelimeterPosition + 1, row.size())));
+
+    return std::make_pair(token, tokenValue);
 }
 
-bool RobotsTxtTokenizer::hasUserAgentRecord(UserAgentType userAgentType) const
+bool RobotsTxtTokenizer::hasUserAgentRecord(WellKnownUserAgent userAgentType) const
 {
-	return m_userAgentTokens.contains(userAgentType);
+    return m_userAgentTokens.find(userAgentType) != m_userAgentTokens.end();
 }
 
-QList<RobotsTxtTokenizer::RobotsTxtTokenVauePair> RobotsTxtTokenizer::allowAndDisallowTokens(UserAgentType userAgentType) const
+std::vector<RobotsTxtTokenizer::RobotsTxtTokenValuePair>
+RobotsTxtTokenizer::allowAndDisallowTokens(WellKnownUserAgent userAgentType) const
 {
-    QVector<RobotsTxtTokenVauePair> result;
-    const QList<QString> allowTokens = tokenValues(userAgentType, RobotsTxtToken::TokenAllow);
-    const QList<QString> disallowTokens = tokenValues(userAgentType, RobotsTxtToken::TokenDisallow);
+    std::vector<RobotsTxtTokenValuePair> result;
+    const std::vector<std::string> allowTokens = tokenValues(userAgentType, RobotsTxtToken::TokenAllow);
+    const std::vector<std::string> disallowTokens = tokenValues(userAgentType, RobotsTxtToken::TokenDisallow);
 
-    foreach(const QString& allowToken, allowTokens)
+    for (const std::string& allowToken : allowTokens)
     {
         result.push_back({ RobotsTxtToken::TokenAllow, allowToken });
     }
 
-    foreach(const QString& disallowToken, disallowTokens)
+    for (const std::string& disallowToken : disallowTokens)
     {
         result.push_back({ RobotsTxtToken::TokenDisallow, disallowToken });
     }
 
-    auto sortFunc = [](const RobotsTxtTokenVauePair& first, const RobotsTxtTokenVauePair& second)
+    auto sortFunc = [](const RobotsTxtTokenValuePair& first, const RobotsTxtTokenValuePair& second)
     {
         if (first.value.size() != second.value.size())
         {
@@ -186,7 +220,7 @@ QList<RobotsTxtTokenizer::RobotsTxtTokenVauePair> RobotsTxtTokenizer::allowAndDi
     };
 
     std::sort(result.begin(), result.end(), sortFunc);
-    return result.toList();
+    return result;
 }
 
 }

@@ -1,11 +1,11 @@
 #pragma once
 
-#include "url.h"
+#include "string_helpers.h"
 
 namespace cpprobotparser
 {
 
-enum class UserAgentType;
+enum class WellKnownUserAgent;
 
 enum class RobotsTxtToken
 {
@@ -24,7 +24,7 @@ enum class RobotsTxtToken
 class RobotsTxtTokenizer final
 {
 public:
-    struct RobotsTxtTokenVauePair
+    struct RobotsTxtTokenValuePair
     {
         RobotsTxtToken token;
         std::string value;
@@ -32,16 +32,25 @@ public:
 
     RobotsTxtTokenizer();
 
+    //! returns true if no error occurred, otherwise returns false
     bool isValid() const noexcept;
+
+    //! parse the passed robots.txt content
     void tokenize(const std::string& robotsTxtContent);
 
-    bool hasUserAgentRecord(UserAgentType userAgentType) const;
+    //! returns true if passed user agent is found in the robots.txt, otherwise returns false
+    bool hasUserAgentRecord(WellKnownUserAgent userAgentType) const;
 
-    std::vector<std::string> tokenValues(UserAgentType userAgentType, RobotsTxtToken token) const;
-    const Url& sitemap() const;
-    const Url& originalHostMirror() const;
+    //! returns all token values for specified user agent and specified token
+    std::vector<std::string> tokenValues(WellKnownUserAgent userAgentType, RobotsTxtToken token) const;
 
-    QList<RobotsTxtTokenVauePair> allowAndDisallowTokens(UserAgentType userAgentType) const;
+    //! returns the URL to the sitemap if it exists in the robots.txt file
+    const std::string& sitemapUrl() const;
+
+    //! returns the URL to the original host mirror if it exists in the robots.txt file
+    const std::string& originalHostMirrorUrl() const;
+
+    std::vector<RobotsTxtTokenValuePair> allowAndDisallowTokens(WellKnownUserAgent userAgentType) const;
 
 private:
     StringHelpers::StringList removeCommentaries(const StringHelpers::StringList& strings);
@@ -50,9 +59,9 @@ private:
 private:
     using Tokens = std::multimap<RobotsTxtToken, std::string>;
 
-    Url m_sitemapUrl;
-    Url m_originalHostMirrorUrl;
-    std::map<UserAgentType, Tokens> m_userAgentTokens;
+    std::string m_sitemapUrl;
+    std::string m_originalHostMirrorUrl;
+    std::map<WellKnownUserAgent, Tokens> m_userAgentTokens;
     bool m_validRobotsTxt;
 };
 
