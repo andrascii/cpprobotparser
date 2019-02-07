@@ -70,7 +70,5 @@ int main(int argc, char** argv)
         std::cout << "Enter the path to the robots.txt file\n";
     }
 
-    std::cout << std::flush;
-
-    std::system("pause");
+    std::cin.get();
 }

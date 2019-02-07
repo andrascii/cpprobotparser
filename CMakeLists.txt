@@ -66,7 +66,7 @@ if(MSVC)
 	set_target_properties(
 		${APPNAME}
 		PROPERTIES WIN32_EXECUTABLE YES
-		LINK_FLAGS "/DEBUG /ENTRY:mainCRTStartup /MAP"
+		LINK_FLAGS "/DEBUG /ENTRY:mainCRTStartup /MAP /SUBSYSTEM:CONSOLE"
 	)
 endif()
 
