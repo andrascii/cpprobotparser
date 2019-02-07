@@ -1,17 +1,30 @@
 #include "string_helpers.h"
 
+namespace
+{
+
+auto toLowerLambdaHelper()
+{
+    return [](char ch)
+    {
+        return static_cast<char>(std::tolower(ch));
+    };
+}
+
+}
+
 namespace cpprobotparser
 {
 
 void StringHelpers::toLower(std::string& source)
 {
-    std::transform(source.begin(), source.end(), source.begin(), std::tolower);
+    std::transform(source.begin(), source.end(), source.begin(), toLowerLambdaHelper());
 }
 
 std::string StringHelpers::toLower(const std::string& source)
 {
     std::string result;
-    std::transform(source.begin(), source.end(), std::inserter(result, result.end()), std::tolower);
+    std::transform(source.begin(), source.end(), std::inserter(result, result.end()), toLowerLambdaHelper());
 
     return std::move(result);
 }
