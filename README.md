@@ -135,7 +135,7 @@ int main(int, char**)
 ```
 
 #### Result
-`
+```
 Site map URL: www.example.com/sitemap.xml
 
 Tokens for googlebot:
@@ -164,4 +164,4 @@ Clean-param: ref /some_dir/get_book.pl
 
 Tokens for *:
 Crawl-delay: 2.0
-`
+```
