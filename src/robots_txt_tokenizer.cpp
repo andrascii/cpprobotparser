@@ -2,12 +2,23 @@
 #include "robots_txt_token.h"
 #include "robots_txt_tokenizer_impl.h"
 
+cpprobotparser::RobotsTxtTokenizer operator "" _tokenizeRobotsTxt(const char* robotsTxtContent, std::size_t)
+{
+    return cpprobotparser::RobotsTxtTokenizer(robotsTxtContent);
+}
+
 namespace cpprobotparser
 {
 
 RobotsTxtTokenizer::RobotsTxtTokenizer()
     : m_impl(new RobotsTxtTokenizerImpl)
 {
+}
+
+RobotsTxtTokenizer::RobotsTxtTokenizer(const std::string& robotsTxtContent)
+    : RobotsTxtTokenizer()
+{
+    tokenize(robotsTxtContent);
 }
 
 RobotsTxtTokenizer::RobotsTxtTokenizer(const RobotsTxtTokenizer& other)

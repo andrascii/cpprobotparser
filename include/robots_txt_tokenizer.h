@@ -15,6 +15,7 @@ class RobotsTxtTokenizer final
 {
 public:
     RobotsTxtTokenizer();
+    RobotsTxtTokenizer(const std::string& robotsTxtContent);
     RobotsTxtTokenizer(const RobotsTxtTokenizer& other);
     RobotsTxtTokenizer(RobotsTxtTokenizer&& other) noexcept;
     ~RobotsTxtTokenizer();
@@ -47,3 +48,5 @@ private:
 };
 
 }
+
+cpprobotparser::RobotsTxtTokenizer operator "" _tokenizeRobotsTxt(const char* robotsTxtContent, std::size_t sz);
