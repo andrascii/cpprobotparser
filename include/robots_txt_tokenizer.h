@@ -6,31 +6,20 @@ namespace cpprobotparser
 {
 
 enum class WellKnownUserAgent;
+enum class RobotsTxtToken;
 
-enum class RobotsTxtToken
-{
-    TokenUserAgent,
-    TokenAllow,
-    TokenDisallow,
-    TokenSitemap,
-    TokenHost,
-    TokenCrawlDelay,
-    TokenCleanParam,
-    TokenCommentary,
-    TokenStringDelimeter,
-    TokenUnknown
-};
+class RobotsTxtTokenizerImpl;
 
 class RobotsTxtTokenizer final
 {
 public:
-    struct RobotsTxtTokenValuePair
-    {
-        RobotsTxtToken token;
-        std::string value;
-    };
-
     RobotsTxtTokenizer();
+    RobotsTxtTokenizer(const RobotsTxtTokenizer& other);
+    RobotsTxtTokenizer(RobotsTxtTokenizer&& other);
+    ~RobotsTxtTokenizer();
+
+    RobotsTxtTokenizer& operator=(const RobotsTxtTokenizer& other);
+    RobotsTxtTokenizer& operator=(RobotsTxtTokenizer&& other);
 
     //! returns true if no error occurred, otherwise returns false
     bool isValid() const noexcept;
@@ -50,19 +39,8 @@ public:
     //! returns the URL to the original host mirror if it exists in the robots.txt file
     const std::string& originalHostMirrorUrl() const;
 
-    std::vector<RobotsTxtTokenValuePair> allowAndDisallowTokens(WellKnownUserAgent userAgentType) const;
-
 private:
-    StringHelpers::StringList removeCommentaries(const StringHelpers::StringList& strings);
-    std::pair<std::string, std::string> tokenizeRow(const std::string& row) const;
-
-private:
-    using Tokens = std::multimap<RobotsTxtToken, std::string>;
-
-    std::string m_sitemapUrl;
-    std::string m_originalHostMirrorUrl;
-    std::map<WellKnownUserAgent, Tokens> m_userAgentTokens;
-    bool m_validRobotsTxt;
+    RobotsTxtTokenizerImpl* m_impl;
 };
 
 }
