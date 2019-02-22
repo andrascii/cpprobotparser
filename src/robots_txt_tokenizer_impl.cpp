@@ -1,6 +1,7 @@
 #include "robots_txt_tokenizer_impl.h"
 #include "robots_txt_token.h"
 #include "meta_robots_helpers.h"
+#include "well_known_user_agent.h"
 
 namespace
 {

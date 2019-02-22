@@ -1,10 +1,9 @@
 #pragma once
 
-#include "well_known_user_agent.h"
-
 namespace cpprobotparser
 {
 
+enum class WellKnownUserAgent;
 class RobotsTxtTokenizer;
 
 class MetaRobotsHelpers
