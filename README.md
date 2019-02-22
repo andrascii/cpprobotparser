@@ -9,37 +9,33 @@ This module represents the robots.txt parser written in C++, which answers quest
 
 ```cpp
 #include "robots_txt_tokenizer.h"
-#include "string_helpers.h"
 #include "meta_robots_helpers.h"
+#include "well_known_user_agent.h"
 #include "robots_txt_token.h"
 
 using namespace cpprobotparser;
 
 int main(int, char**)
 {
-    const std::string content(
-        "Sitemap: www.example.com/sitemap.xml\n"
-        "User-agent: Googlebot\n"
-        "Disallow: /oembed\n"
-        "Disallow: /*/forks\n"
-        "Disallow: /*/stars\n"
-        "Disallow: /*/download\n"
-        "Disallow: /*/revisions\n"
-        "Disallow: /*/*/issues/new\n"
-        "Disallow: /*/*/issues/search\n"
-        "Disallow: /*/*/commits/*/*\n"
-        "Disallow: /*/*/commits/*?author\n"
-        "Disallow: /*/*/commits/*?path\n"
-        "Disallow: /*/*/branches\n"
-        "Disallow: /*/*/tags\n"
-        "Disallow: /*/*/contributors\n"
-        "Disallow: /*/*/comments\n"
-        "Allow: /*/*/tree/master\n"
-        "Allow: /*/*/blob/master\n"
-    );
-
-    RobotsTxtTokenizer tokenizer;
-    tokenizer.tokenize(content);
+    RobotsTxtTokenizer tokenizer =
+        "Sitemap: www.example.com/sitemap.xml\n \
+        User-agent: Googlebot\n \
+        Disallow: /oembed\n \
+        Disallow: /*/forks\n \
+        Disallow: /*/stars\n \
+        Disallow: /*/download\n \
+        Disallow: /*/revisions\n \
+        Disallow: /*/*/issues/new\n \
+        Disallow: /*/*/issues/search\n \
+        Disallow: /*/*/commits/*/*\n \
+        Disallow: /*/*/commits/*?author\n \
+        Disallow: /*/*/commits/*?path\n \
+        Disallow: /*/*/branches\n \
+        Disallow: /*/*/tags\n \
+        Disallow: /*/*/contributors\n \
+        Disallow: /*/*/comments\n \
+        Allow: /*/*/tree/master\n \
+        Allow: /*/*/blob/master\n"_tokenizeRobotsTxt;
 
     const std::string sitemapUrl = tokenizer.sitemapUrl();
     const std::string originalHostMirrorUrl = tokenizer.originalHostMirrorUrl();
