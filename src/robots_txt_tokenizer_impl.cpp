@@ -92,12 +92,8 @@ void RobotsTxtTokenizerImpl::tokenize(const std::string& robotsTxtContent)
 
             if (tokenEnumerator == RobotsTxtToken::TokenSitemap)
             {
-                if (!m_sitemapUrl.empty())
-                {
-                    continue;
-                }
-
                 m_sitemapUrl = tokenValue;
+                continue;
             }
 
             if (userAgentType == WellKnownUserAgent::Unknown)
