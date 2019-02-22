@@ -15,8 +15,13 @@ public:
 
     bool isValid() const noexcept;
     void tokenize(const std::string& robotsTxtContent);
+
     bool hasUserAgentRecord(WellKnownUserAgent userAgentType) const;
+    bool hasUserAgentRecord(const std::string& userAgent) const;
+
     std::vector<std::string> tokenValues(WellKnownUserAgent userAgentType, RobotsTxtToken token) const;
+    std::vector<std::string> tokenValues(const std::string& userAgent, RobotsTxtToken token) const;
+
     const std::string& sitemapUrl() const;
     const std::string& originalHostMirrorUrl() const;
 
@@ -29,7 +34,7 @@ private:
 
     std::string m_sitemapUrl;
     std::string m_originalHostMirrorUrl;
-    std::map<WellKnownUserAgent, Tokens> m_userAgentTokens;
+    std::map<std::string, Tokens> m_userAgentTokens;
     bool m_validRobotsTxt;
 };
 

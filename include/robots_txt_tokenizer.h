@@ -1,7 +1,5 @@
 #pragma once
 
-#include "string_helpers.h"
-
 namespace cpprobotparser
 {
 
@@ -29,9 +27,11 @@ public:
 
     //! returns true if passed user agent is found in the robots.txt, otherwise returns false
     bool hasUserAgentRecord(WellKnownUserAgent userAgentType) const;
+    bool hasUserAgentRecord(const std::string& userAgent) const;
 
     //! returns all token values for specified user agent and specified token
     std::vector<std::string> tokenValues(WellKnownUserAgent userAgentType, RobotsTxtToken token) const;
+    std::vector<std::string> tokenValues(const std::string& userAgent, RobotsTxtToken token) const;
 
     //! returns the URL to the sitemap if it exists in the robots.txt file
     const std::string& sitemapUrl() const;

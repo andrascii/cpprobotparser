@@ -19,7 +19,7 @@ namespace cpprobotparser
 void StringHelpers::toLower(std::string& source)
 {
     std::transform(source.begin(), source.end(), source.begin(), toLowerLambdaHelper());
-} 
+}
 
 std::string StringHelpers::toLower(const std::string& source)
 {

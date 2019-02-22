@@ -1,5 +1,4 @@
 #include "robots_txt_tokenizer.h"
-#include "meta_robots_helpers.h"
 #include "robots_txt_token.h"
 #include "robots_txt_tokenizer_impl.h"
 
@@ -66,6 +65,12 @@ RobotsTxtTokenizer::tokenValues(WellKnownUserAgent userAgentType, RobotsTxtToken
     return m_impl->tokenValues(userAgentType, token);
 }
 
+std::vector<std::string>
+RobotsTxtTokenizer::tokenValues(const std::string& userAgent, RobotsTxtToken token) const
+{
+    return m_impl->tokenValues(userAgent, token);
+}
+
 const std::string&
 RobotsTxtTokenizer::sitemapUrl() const
 {
@@ -81,6 +86,11 @@ RobotsTxtTokenizer::originalHostMirrorUrl() const
 bool RobotsTxtTokenizer::hasUserAgentRecord(WellKnownUserAgent userAgentType) const
 {
     return m_impl->hasUserAgentRecord(userAgentType);
+}
+
+bool RobotsTxtTokenizer::hasUserAgentRecord(const std::string& userAgent) const
+{
+    return m_impl->hasUserAgentRecord(userAgent);
 }
 
 }

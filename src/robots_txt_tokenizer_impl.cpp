@@ -104,7 +104,7 @@ void RobotsTxtTokenizerImpl::tokenize(const std::string& robotsTxtContent)
                 continue;
             }
 
-            Tokens& tokens = m_userAgentTokens[userAgentType];
+            Tokens& tokens = m_userAgentTokens[MetaRobotsHelpers::userAgentString(userAgentType)];
             tokens.insert(std::make_pair(tokenEnumerator, tokenValue));
         }
     }
@@ -115,17 +115,23 @@ void RobotsTxtTokenizerImpl::tokenize(const std::string& robotsTxtContent)
 std::vector<std::string>
 RobotsTxtTokenizerImpl::tokenValues(WellKnownUserAgent userAgentType, RobotsTxtToken token) const
 {
+    return tokenValues(MetaRobotsHelpers::userAgentString(userAgentType), token);
+}
+
+std::vector<std::string>
+RobotsTxtTokenizerImpl::tokenValues(const std::string& userAgent, RobotsTxtToken token) const
+{
     std::vector<std::string> result;
 
     try
     {
-        const Tokens& tokens = m_userAgentTokens.at(userAgentType);
+        const Tokens& tokens = m_userAgentTokens.at(userAgent);
         const auto rangePair = tokens.equal_range(token);
 
         std::for_each(rangePair.first, rangePair.second, [&result](const auto& iter)
-            {
-                result.push_back(iter.second);
-            });
+        {
+            result.push_back(iter.second);
+        });
     }
     catch (const std::out_of_range&)
     {
@@ -189,7 +195,12 @@ RobotsTxtTokenizerImpl::tokenizeRow(const std::string& row) const
 
 bool RobotsTxtTokenizerImpl::hasUserAgentRecord(WellKnownUserAgent userAgentType) const
 {
-    return m_userAgentTokens.find(userAgentType) != m_userAgentTokens.end();
+    return m_userAgentTokens.find(MetaRobotsHelpers::userAgentString(userAgentType)) != m_userAgentTokens.end();
+}
+
+bool RobotsTxtTokenizerImpl::hasUserAgentRecord(const std::string& userAgent) const
+{
+    return m_userAgentTokens.find(userAgent) != m_userAgentTokens.end();
 }
 
 }
