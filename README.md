@@ -5,6 +5,29 @@ This module represents the robots.txt parser written in C++, which answers quest
 
 [`robots_txt_tokenizer.h`](https://github.com/andrascii/cpprobotparser/blob/master/include/robots_txt_tokenizer.h) - this tokenizer is used to only parse robots.txt file and provide you rules for each user agent occurred in the file.
 
+Using `tokenValues` method it can give the value of any token taken from this enumeration [`robots_txt_token.h`](https://github.com/andrascii/cpprobotparser/blob/master/include/robots_txt_token.h):
+
+```cpp
+namespace cpprobotparser
+{
+
+enum class RobotsTxtToken
+{
+    TokenUserAgent,
+    TokenAllow,
+    TokenDisallow,
+    TokenSitemap,
+    TokenHost,
+    TokenCrawlDelay,
+    TokenCleanParam,
+    TokenCommentary,
+    TokenStringDelimeter,
+    TokenUnknown
+};
+
+}
+```
+
 ### Example
 
 ```cpp
