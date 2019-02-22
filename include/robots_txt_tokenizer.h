@@ -8,12 +8,15 @@ enum class RobotsTxtToken;
 
 class RobotsTxtTokenizerImpl;
 
+//! Non thread-safe
+//! This tokenizer is used to only parse robots.txt file
+//! and provide you rules for each user agent occurred in the file.
 class RobotsTxtTokenizer final
 {
 public:
     RobotsTxtTokenizer();
     RobotsTxtTokenizer(const RobotsTxtTokenizer& other);
-    RobotsTxtTokenizer(RobotsTxtTokenizer&& other);
+    RobotsTxtTokenizer(RobotsTxtTokenizer&& other) noexcept;
     ~RobotsTxtTokenizer();
 
     RobotsTxtTokenizer& operator=(const RobotsTxtTokenizer& other);
@@ -34,10 +37,10 @@ public:
     std::vector<std::string> tokenValues(const std::string& userAgent, RobotsTxtToken token) const;
 
     //! returns the URL to the sitemap if it exists in the robots.txt file
-    const std::string& sitemapUrl() const;
+    const std::string& sitemapUrl() const noexcept;
 
     //! returns the URL to the original host mirror if it exists in the robots.txt file
-    const std::string& originalHostMirrorUrl() const;
+    const std::string& originalHostMirrorUrl() const noexcept;
 
 private:
     RobotsTxtTokenizerImpl* m_impl;

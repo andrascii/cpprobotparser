@@ -15,7 +15,7 @@ RobotsTxtTokenizer::RobotsTxtTokenizer(const RobotsTxtTokenizer& other)
 {
 }
 
-RobotsTxtTokenizer::RobotsTxtTokenizer(RobotsTxtTokenizer&& other)
+RobotsTxtTokenizer::RobotsTxtTokenizer(RobotsTxtTokenizer&& other) noexcept
     : m_impl(other.m_impl)
 {
     other.m_impl = nullptr;
@@ -72,13 +72,13 @@ RobotsTxtTokenizer::tokenValues(const std::string& userAgent, RobotsTxtToken tok
 }
 
 const std::string&
-RobotsTxtTokenizer::sitemapUrl() const
+RobotsTxtTokenizer::sitemapUrl() const noexcept
 {
     return m_impl->sitemapUrl();
 }
 
 const std::string&
-RobotsTxtTokenizer::originalHostMirrorUrl() const
+RobotsTxtTokenizer::originalHostMirrorUrl() const noexcept
 {
     return m_impl->originalHostMirrorUrl();
 }

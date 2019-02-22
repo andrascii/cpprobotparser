@@ -15,7 +15,7 @@ const std::map<std::string, WellKnownUserAgent> s_userAgent =
     { "mail.ru", WellKnownUserAgent::MailRuBot },
     { "msnbot", WellKnownUserAgent::MsnBot },
     { "slurp", WellKnownUserAgent::YahooBot },
-    { "*", WellKnownUserAgent::AnyBot }
+    { "*", WellKnownUserAgent::AllRobots }
 };
 
 const std::map<WellKnownUserAgent, std::string> s_userAgentByType =
@@ -25,7 +25,7 @@ const std::map<WellKnownUserAgent, std::string> s_userAgentByType =
     { WellKnownUserAgent::MailRuBot, "mail.ru" },
     { WellKnownUserAgent::MsnBot, "msnbot" },
     { WellKnownUserAgent::YahooBot, "slurp" },
-    { WellKnownUserAgent::AnyBot, "*" }
+    { WellKnownUserAgent::AllRobots, "*" }
 };
 
 }
@@ -62,7 +62,7 @@ std::vector<WellKnownUserAgent> MetaRobotsHelpers::wellKnownUserAgents()
     return std::vector<WellKnownUserAgent>
     {
         WellKnownUserAgent::GoogleBot, WellKnownUserAgent::YandexBot, WellKnownUserAgent::MailRuBot,
-            WellKnownUserAgent::MsnBot, WellKnownUserAgent::YahooBot, WellKnownUserAgent::AnyBot
+            WellKnownUserAgent::MsnBot, WellKnownUserAgent::YahooBot, WellKnownUserAgent::AllRobots
     };
 }
 

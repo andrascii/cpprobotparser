@@ -22,11 +22,11 @@ public:
     std::vector<std::string> tokenValues(WellKnownUserAgent userAgentType, RobotsTxtToken token) const;
     std::vector<std::string> tokenValues(const std::string& userAgent, RobotsTxtToken token) const;
 
-    const std::string& sitemapUrl() const;
-    const std::string& originalHostMirrorUrl() const;
+    const std::string& sitemapUrl() const noexcept;
+    const std::string& originalHostMirrorUrl() const noexcept;
 
 private:
-    StringHelpers::StringList removeCommentaries(const StringHelpers::StringList& strings);
+    StringHelpers::StringList removeCommentaries(const StringHelpers::StringList& strings) const;
     std::pair<std::string, std::string> tokenizeRow(const std::string& row) const;
 
 private:

@@ -15,7 +15,7 @@ enum class WellKnownUserAgent
     RamblerBot,
     AportBot,
     WebAltaBot,
-    AnyBot // it means "*"
+    AllRobots // it means "*"
 };
 
 }

@@ -53,7 +53,7 @@ void RobotsTxtTokenizerImpl::tokenize(const std::string& robotsTxtContent)
     StringHelpers::StringList rows = removeCommentaries(
         StringHelpers::splitString(robotsTxtContent, [](char ch) { return ch == '\n'; }, StringHelpers::SkipEmptyParts));
 
-    WellKnownUserAgent userAgentType = WellKnownUserAgent::AnyBot;
+    WellKnownUserAgent userAgentType = WellKnownUserAgent::AllRobots;
 
     for (int i = 0; i < rows.size(); ++i)
     {
@@ -141,19 +141,19 @@ RobotsTxtTokenizerImpl::tokenValues(const std::string& userAgent, RobotsTxtToken
 }
 
 const std::string&
-RobotsTxtTokenizerImpl::sitemapUrl() const
+RobotsTxtTokenizerImpl::sitemapUrl() const noexcept
 {
     return m_sitemapUrl;
 }
 
 const std::string&
-RobotsTxtTokenizerImpl::originalHostMirrorUrl() const
+RobotsTxtTokenizerImpl::originalHostMirrorUrl() const noexcept
 {
     return m_originalHostMirrorUrl;
 }
 
 StringHelpers::StringList
-RobotsTxtTokenizerImpl::removeCommentaries(const StringHelpers::StringList& strings)
+RobotsTxtTokenizerImpl::removeCommentaries(const StringHelpers::StringList& strings) const
 {
     StringHelpers::StringList resultStrings;
 
