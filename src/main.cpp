@@ -5,70 +5,65 @@
 
 using namespace cpprobotparser;
 
-std::string content(const std::string& path)
+int main(int, char**)
 {
-    std::string result;
-    std::ifstream in(path);
+    const std::string content(
+        "Sitemap: www.example.com/sitemap.xml\n"
+        "User-agent: Googlebot\n"
+        "Disallow: /oembed\n"
+        "Disallow: /*/forks\n"
+        "Disallow: /*/stars\n"
+        "Disallow: /*/download\n"
+        "Disallow: /*/revisions\n"
+        "Disallow: /*/*/issues/new\n"
+        "Disallow: /*/*/issues/search\n"
+        "Disallow: /*/*/commits/*/*\n"
+        "Disallow: /*/*/commits/*?author\n"
+        "Disallow: /*/*/commits/*?path\n"
+        "Disallow: /*/*/branches\n"
+        "Disallow: /*/*/tags\n"
+        "Disallow: /*/*/contributors\n"
+        "Disallow: /*/*/comments\n"
+        "Allow: /*/*/tree/master\n"
+        "Allow: /*/*/blob/master\n"
+    );
 
-    while (in)
+    RobotsTxtTokenizer tokenizer;
+    tokenizer.tokenize(content);
+
+    const std::string sitemapUrl = tokenizer.sitemapUrl();
+    const std::string originalHostMirrorUrl = tokenizer.originalHostMirrorUrl();
+
+    std::cout << "Site map URL: " << (sitemapUrl.empty() ? "None" : sitemapUrl) << "\n";
+    std::cout << "Original host mirror URL: " << (originalHostMirrorUrl.empty() ? "None" : originalHostMirrorUrl) << "\n";
+
+    const std::vector<WellKnownUserAgent> wellKnownUserAgents =
+        MetaRobotsHelpers::wellKnownUserAgents();
+
+    for (WellKnownUserAgent wellKnownUserAgent : wellKnownUserAgents)
     {
-        std::string line;
-        std::getline(in, line);
-        result += line + "\n";
-    }
+        const std::vector<std::string> allowTokens =
+            tokenizer.tokenValues(wellKnownUserAgent, RobotsTxtToken::TokenAllow);
 
-    return result;
-}
+        const std::vector<std::string> disallowTokens =
+            tokenizer.tokenValues(wellKnownUserAgent, RobotsTxtToken::TokenDisallow);
 
-int main(int argc, char** argv)
-{
-    std::string robotstxtContent;
-
-    if (argc > 1)
-    {
-        robotstxtContent = content(argv[1]);
-
-        RobotsTxtTokenizer tokenizer;
-        tokenizer.tokenize(robotstxtContent);
-
-        const std::string sitemapUrl = tokenizer.sitemapUrl();
-        const std::string originalHostMirrorUrl = tokenizer.originalHostMirrorUrl();
-
-        std::cout << "Site map URL: " << (sitemapUrl.empty() ? "None" : sitemapUrl) << "\n";
-        std::cout << "Original host mirror URL: " << (originalHostMirrorUrl.empty() ? "None" : originalHostMirrorUrl) << "\n";
-
-        const std::vector<WellKnownUserAgent> wellKnownUserAgents =
-            MetaRobotsHelpers::wellKnownUserAgents();
-
-        for (WellKnownUserAgent wellKnownUserAgent : wellKnownUserAgents)
+        if (allowTokens.empty() && disallowTokens.empty())
         {
-            const std::vector<std::string> allowTokens =
-                tokenizer.tokenValues(wellKnownUserAgent, RobotsTxtToken::TokenAllow);
-
-            const std::vector<std::string> disallowTokens =
-                tokenizer.tokenValues(wellKnownUserAgent, RobotsTxtToken::TokenDisallow);
-
-            if (allowTokens.empty() && disallowTokens.empty())
-            {
-                continue;
-            }
-
-            std::cout << "Tokens for " << MetaRobotsHelpers::userAgentString(wellKnownUserAgent) << ": \n";
-
-            for (const std::string& allowTokenValue : allowTokens)
-            {
-                std::cout << "Allow: " << allowTokenValue << "\n";
-            }
-            for (const std::string& disallowTokenValue : disallowTokens)
-            {
-                std::cout << "Disallow: " << disallowTokenValue << "\n";
-            }
-            std::cout << "*************************************************************************\n\n";
+            continue;
         }
-    }
-    else
-    {
-        std::cout << "Enter the path to the robots.txt file\n";
+
+        std::cout << "Tokens for " << MetaRobotsHelpers::userAgentString(wellKnownUserAgent) << ": \n";
+
+        for (const std::string& allowTokenValue : allowTokens)
+        {
+            std::cout << "Allow: " << allowTokenValue << "\n";
+        }
+        for (const std::string& disallowTokenValue : disallowTokens)
+        {
+            std::cout << "Disallow: " << disallowTokenValue << "\n";
+        }
+        std::cout << "*************************************************************************\n\n";
     }
 
     std::cin.get();
