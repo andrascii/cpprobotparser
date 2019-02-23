@@ -2,6 +2,7 @@
 #include "meta_robots_helpers.h"
 #include "well_known_user_agent.h"
 #include "robots_txt_token.h"
+#include "robots_txt_rules.h"
 
 using namespace cpprobotparser;
 
@@ -96,6 +97,46 @@ int main(int, char**)
 
         std::cout << "\n\n";
     }
+
+    //////////////////////////////////////////////////////////////////////////
+
+    RobotsTxtRules rules(R"(
+        Sitemap: www.example.com/sitemap.xml
+
+        User-agent: *
+        Crawl-delay: 2.0
+
+        User-agent: Googlebot
+
+        Disallow: /oembed
+        Disallow: /*/forks
+        Disallow: /*/stars
+        Disallow: /*/download
+        Disallow: /*/revisions
+        Disallow: /*/*/issues/new
+        Disallow: /*/*/issues/search
+        Disallow: /*/*/commits/*/*
+        Disallow: /*/*/commits/*?author
+        Disallow: /*/*/commits/*?path
+        Disallow: /*/*/branches
+        Disallow: /*/*/tags
+        Disallow: /*/*/contributors
+        Disallow: /*/*/comments
+
+        Allow: /*/*/tree/master
+        Allow: /*/*/blob/master
+
+        User-agent: Yandex
+        Allow: /
+        Allow: /catalog/auto
+        Disallow: /catalog
+        Clean-param: ref /some_dir/get_book.pl
+        )");
+
+    std::cout << std::boolalpha << "expected false: " << rules.isUrlAllowed("http://www.example.com/catalog", WellKnownUserAgent::YandexBot) << "\n";
+    std::cout << std::boolalpha << "expected true: " << rules.isUrlAllowed("http://www.example.com/catalog/auto", WellKnownUserAgent::YandexBot) << "\n";
+    std::cout << std::boolalpha << "expected true: " << rules.isUrlAllowed("http://www.example.com/", WellKnownUserAgent::YandexBot) << "\n";
+    std::cout << std::boolalpha << "expected false: " << rules.isUrlAllowed("http://www.example.com/index/folder/issues/new/", WellKnownUserAgent::GoogleBot) << "\n";
 
     std::cin.get();
 }

@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 
+add_subdirectory(third_party)
+
 ###########################################################################
 MACRO(add_msvc_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar)
   IF(MSVC)
@@ -32,6 +34,7 @@ project(${APPNAME})
 
 set(SOURCES_DIR src)
 set(INCLUDE_DIR include)
+set(CXXURL_INCLUDE_DIR "./third_party/cxxurl/")
 
 aux_source_directory(${SOURCES_DIR} SOURCES_LIST)
 file(GLOB_RECURSE HEADERS_LIST "include/*.h")
@@ -70,5 +73,5 @@ if(MSVC)
 	)
 endif()
 
-include_directories(${INCLUDE_DIR})
-target_link_libraries(${APPNAME})
+include_directories(${INCLUDE_DIR} ${CXXURL_INCLUDE_DIR})
+target_link_libraries(${APPNAME} CxxUrl)

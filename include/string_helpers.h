@@ -42,7 +42,10 @@ public:
         const std::string& source,
         const std::string& sep,
         SplitBehavior behavior,
-        CaseSensitivity cs);
+        CaseSensitivity cs = CaseSensitive);
+
+    static bool startsWith(const std::string& source, const std::string& substring, CaseSensitivity cs = CaseSensitive);
+    static bool endsWith(const std::string& source, const std::string& substring, CaseSensitivity cs = CaseSensitive);
 
 private:
     static StringList findHelper(
@@ -57,6 +60,9 @@ private:
 
     static std::pair<size_t, size_t> spaceStringBounds(
         const std::string& source);
+
+    static bool startsWithHelper(const std::string& source, const std::string& substring);
+    static bool endsWithHelper(const std::string& source, const std::string& substring);
 };
 
 }

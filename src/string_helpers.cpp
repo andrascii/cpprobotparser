@@ -228,4 +228,34 @@ StringHelpers::spaceStringBounds(const std::string& source)
     return std::make_pair(begin, end);
 }
 
+bool StringHelpers::startsWith(const std::string& source, const std::string& substring, CaseSensitivity cs)
+{
+    if (cs == CaseInsensitive)
+    {
+        return startsWithHelper(toLower(source), toLower(substring));
+    }
+
+    return startsWithHelper(source, substring);
+}
+
+bool StringHelpers::endsWith(const std::string& source, const std::string& substring, CaseSensitivity cs)
+{
+    if (cs == CaseInsensitive)
+    {
+        return endsWithHelper(toLower(source), toLower(substring));
+    }
+
+    return endsWithHelper(toLower(source), toLower(substring));
+}
+
+bool StringHelpers::startsWithHelper(const std::string& source, const std::string& substring)
+{
+    return source.find(substring) == 0;
+}
+
+bool StringHelpers::endsWithHelper(const std::string& source, const std::string& substring)
+{
+    return source.find(substring) == source.size() - substring.size();
+}
+
 }

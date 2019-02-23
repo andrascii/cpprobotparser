@@ -39,7 +39,7 @@ RobotsTxtTokenizer& RobotsTxtTokenizer::operator=(const RobotsTxtTokenizer& othe
         return *this;
     }
 
-    m_impl = new RobotsTxtTokenizerImpl(*other.m_impl);
+    *m_impl = *other.m_impl;
     return *this;
 }
 
@@ -50,6 +50,7 @@ RobotsTxtTokenizer& RobotsTxtTokenizer::operator=(RobotsTxtTokenizer&& other)
         return *this;
     }
 
+    delete m_impl;
     m_impl = other.m_impl;
     other.m_impl = nullptr;
     return *this;
@@ -60,12 +61,14 @@ RobotsTxtTokenizer::~RobotsTxtTokenizer()
     delete m_impl;
 }
 
-bool RobotsTxtTokenizer::isValid() const noexcept
+bool
+RobotsTxtTokenizer::isValid() const noexcept
 {
     return m_impl->isValid();
 }
 
-void RobotsTxtTokenizer::tokenize(const std::string& robotsTxtContent)
+void
+RobotsTxtTokenizer::tokenize(const std::string& robotsTxtContent)
 {
     m_impl->tokenize(robotsTxtContent);
 }
