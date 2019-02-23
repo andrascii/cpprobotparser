@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.2)
 
 add_subdirectory(third_party)
+add_subdirectory(tests)
 
 ###########################################################################
 MACRO(add_msvc_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar)

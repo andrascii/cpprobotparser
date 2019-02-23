@@ -1,1 +1,2 @@
 add_subdirectory(cxxurl)
+add_subdirectory(googletest)
