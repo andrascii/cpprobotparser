@@ -1,12 +1,14 @@
 #pragma once
 
+#include "export_macro.h"
+
 namespace cpprobotparser
 {
 
 enum class WellKnownUserAgent;
 class RobotsTxtRulesImpl;
 
-class RobotsTxtRules final
+class CPPROBOTPARSER_EXPORT RobotsTxtRules final
 {
 public:
     RobotsTxtRules();

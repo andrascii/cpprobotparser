@@ -29,6 +29,10 @@ set(SOURCES
         ${HEADERS}
         ${CMAKE_CURRENT_SOURCE_DIR}/url.cpp)
 
+if(MSVC)
+    add_definitions(/MTd)
+endif(MSVC)
+
 add_library(CxxUrl STATIC ${SOURCES})
 set_target_properties(CxxUrl PROPERTIES SOVERSION 1)
 set_target_properties(CxxUrl PROPERTIES PUBLIC_HEADER url.hpp)

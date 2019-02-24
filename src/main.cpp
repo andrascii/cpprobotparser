@@ -6,7 +6,7 @@
 
 using namespace cpprobotparser;
 
-int main(int, char**)
+int main1(int, char**)
 {
     RobotsTxtTokenizer tokenizer =
         R"(
@@ -139,4 +139,6 @@ int main(int, char**)
     std::cout << std::boolalpha << "expected false: " << rules.isUrlAllowed("http://www.example.com/index/folder/issues/new/", WellKnownUserAgent::GoogleBot) << "\n";
 
     std::cin.get();
+
+    return 0;
 }

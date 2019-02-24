@@ -1,8 +1,10 @@
 import os
 import subprocess
 
-cmakeCachePath = "build/CMakeCache.txt"
+separatorString = "\n" + ("*" * 80)
+
 buildDirectory = "build"
+cmakeCachePath = "".join([buildDirectory, "/CMakeCache.txt"])
 
 try:
     if os.path.exists(cmakeCachePath):
@@ -13,7 +15,7 @@ try:
 
     subprocess.call(["cmake", "-G", "Visual Studio 15 2017 Win64", "-B", buildDirectory, "-S", "./"])
 
-    input("Done!")
+    input(separatorString)
 
 except Exception as exception:
     print("Error:", str(exception))

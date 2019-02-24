@@ -6,22 +6,21 @@ include(ExternalProject)
 externalproject_add(googletest
     GIT_REPOSITORY https://github.com/google/googletest
     GIT_TAG master
-    SOURCE_DIR        "${CMAKE_CURRENT_BINARY_DIR}/googletest-src"
-    BINARY_DIR        "${CMAKE_CURRENT_BINARY_DIR}/googletest-build"
+    SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/googletest-src"
+    BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/googletest-build"
 	INSTALL_COMMAND ""
 	UPDATE_COMMAND ""
 )
 
 externalproject_get_property(googletest Source_Dir Binary_Dir)
-set(GOOGLETEST_HEADERS_DIR "${Source_Dir}/googletest/include" CACHE INTERNAL "")
-include_directories(${GOOGLETEST_HEADERS_DIR})
+set(GOOGLE_TEST_HEADERS_DIR "${Source_Dir}/googletest/include" CACHE INTERNAL "")
+include_directories(${GOOGLE_TEST_HEADERS_DIR})
 
-message(STATUS "GOOGLETEST Binary directory ${Binary_Dir}")
+# export variables
+set(GTEST_DEBUG_PATH "${Binary_Dir}/lib/Debug" CACHE INTERNAL "")
+set(GTEST_RELEASE_PATH "${Binary_Dir}/lib/Release" CACHE INTERNAL "")
 
-set(GOOGLETEST_DEPENDENCY googletest CACHE INTERNAL "")
-
-# set(CurlDebugDir ${Binary_Dir}/lib/debug)
-# set(CurlReleaseDir ${Binary_Dir}/lib/release)
-
-# message(STATUS "CURL Debug directory ${CurlDebugDir}")
-# message(STATUS "CURL Release directory ${CurlReleaseDir}")
+# debug info
+message("==== Binary_Dir: ${Binary_Dir}")
+message("==== GTEST_DEBUG_PATH: ${GTEST_DEBUG_PATH}")
+message("==== GTEST_RELEASE_PATH: ${GTEST_RELEASE_PATH}")

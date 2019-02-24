@@ -13,29 +13,29 @@ if(MSVC)
 	add_definitions(
 		/EHsc
 		/MP
-		/std:c++latest
+		/std:c++17
 		/Zi
 		/W4
 		/WX
 		/MTd
 	)
-	
-	set_target_properties(
-		${TESTS}
-		PROPERTIES
-		LINK_FLAGS "/DEBUG /ENTRY:mainCRTStartup /MAP /SUBSYSTEM:CONSOLE"
+
+	add_custom_command(
+		TARGET ${TESTS} 
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND}
+		ARGS -E copy
+		"${CPPROBOTPARSER_OUTPUT_DIR}/${CPPROBOTPARSER_LIBRARY}.dll"
+		"${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}"
 	)
 endif()
 
-# Prevent overriding the parent project's compiler/linker
-# settings on Windows
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+include_directories(${GOOGLE_TEST_HEADERS_DIR} ${CPPROBOTPARSER_INCLUDE_DIR})
 
-# Add googletest directly to our build. This defines
-# the gtest and gtest_main targets.
-#add_subdirectory(#"${CMAKE_CURRENT_BINARY_DIR}/../third_party/googletest/googletest-src"
-                 #"${CMAKE_CURRENT_BINARY_DIR}/../third_party/googletest/googletest-build"
-                 #EXCLUDE_FROM_ALL)
-
-include_directories(${GOOGLETEST_HEADERS_DIR})
-target_link_libraries(${TESTS} gtest_main gmock_main gtest gmock)
+target_link_libraries(${TESTS}
+	${CPPROBOTPARSER_LIBRARY}
+	"$<$<CONFIG:Debug>:${GTEST_DEBUG_PATH}/gtestd.lib>"
+	"$<$<CONFIG:Debug>:${GTEST_DEBUG_PATH}/gtest_maind.lib>"
+	"$<$<CONFIG:Release>:${GTEST_RELEASE_PATH}/gtest.lib>"
+	"$<$<CONFIG:Release>:${GTEST_RELEASE_PATH}/gtest_main.lib>"
+)
