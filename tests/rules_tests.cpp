@@ -43,7 +43,7 @@ const std::string s_testData(R"(
 
 }
 
-TEST(Tests, isAllowedTest)
+TEST(RulesTests, isAllowedTest)
 {
     RobotsTxtRules rules(s_testData);
 
@@ -51,14 +51,4 @@ TEST(Tests, isAllowedTest)
     EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/catalog/auto", WellKnownUserAgent::YandexBot), true);
     EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/", WellKnownUserAgent::YandexBot), true);
     EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/index/folder/issues/new/", WellKnownUserAgent::GoogleBot), false);
-}
-
-int main(int argc, char* argv[])
-{
-    testing::InitGoogleTest(&argc, argv);
-    const int result = RUN_ALL_TESTS();
-
-    std::cin.get();
-
-    return result;
 }

@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.4)
-project(CxxUrl)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CXX_URL_DEPENDENCY cxxurl CACHE INTERNAL "")
+project(${CXX_URL_DEPENDENCY})
+
+set(CMAKE_CXX_STANDARD 17)
 
 #*********************************************************
 # determine platform
@@ -33,6 +35,6 @@ if(MSVC)
     add_definitions(/MTd)
 endif(MSVC)
 
-add_library(CxxUrl STATIC ${SOURCES})
-set_target_properties(CxxUrl PROPERTIES SOVERSION 1)
-set_target_properties(CxxUrl PROPERTIES PUBLIC_HEADER url.hpp)
+add_library(${CXX_URL_DEPENDENCY} STATIC ${SOURCES})
+set_target_properties(${CXX_URL_DEPENDENCY} PROPERTIES SOVERSION 1)
+set_target_properties(${CXX_URL_DEPENDENCY} PROPERTIES PUBLIC_HEADER url.hpp)

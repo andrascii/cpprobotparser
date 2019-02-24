@@ -1,3 +1,10 @@
+#
+# This file exports the next variables to link with it:
+# CPPROBOTPARSER_LIBRARY - this library dependency and the name of the library. Use target_link_libraries with this variable
+# CPPROBOTPARSER_INCLUDE_DIR - path to the include files
+# CPPROBOTPARSER_BINARY_DIR - path to the binary files
+#
+
 cmake_minimum_required(VERSION 3.2)
 
 add_subdirectory(third_party)
@@ -51,11 +58,12 @@ add_library(
 	${HEADERS_LIST}
 )
 
+set(CMAKE_CXX_STANDARD 17)
+
 if(MSVC)
 	add_definitions(
 		/EHsc
 		/MP
-		/std:c++17
 		/Zi
 		/W4
 		/WX
@@ -78,16 +86,16 @@ set_target_properties(
 )
 
 include_directories(${INCLUDE_DIR} ${CXXURL_INCLUDE_DIR})
-target_link_libraries(${CPPROBOTPARSER_LIBRARY} CxxUrl)
+target_link_libraries(${CPPROBOTPARSER_LIBRARY} ${THIRD_PARTY_CXX_URL})
 
 # set additional export variables
 set(CPPROBOTPARSER_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" CACHE INTERNAL "")
-set(CPPROBOTPARSER_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}" CACHE INTERNAL "")
+set(CPPROBOTPARSER_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}" CACHE INTERNAL "")
 
 # debug output
 message("==== ${CPPROBOTPARSER_LIBRARY} debug info:")
 message("==== CPPROBOTPARSER_INCLUDE_DIR: ${CPPROBOTPARSER_INCLUDE_DIR}")
-message("==== CPPROBOTPARSER_OUTPUT_DIR: ${CPPROBOTPARSER_OUTPUT_DIR}")
+message("==== CPPROBOTPARSER_BINARY_DIR: ${CPPROBOTPARSER_BINARY_DIR}")
 message("==== CPPROBOTPARSER_LIBRARY: ${CPPROBOTPARSER_LIBRARY}")
 
 add_subdirectory(tests)

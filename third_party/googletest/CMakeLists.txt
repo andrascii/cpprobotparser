@@ -3,17 +3,19 @@ set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
 
 include(ExternalProject)
 
-externalproject_add(googletest
+set(GTEST_DEPENDENCY googletest CACHE INTERNAL "")
+
+externalproject_add(${GTEST_DEPENDENCY}
     GIT_REPOSITORY https://github.com/google/googletest
     GIT_TAG master
-    SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/googletest-src"
-    BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/googletest-build"
+    SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/${GTEST_DEPENDENCY}-src"
+    BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/${GTEST_DEPENDENCY}-build"
 	INSTALL_COMMAND ""
 	UPDATE_COMMAND ""
 )
 
-externalproject_get_property(googletest Source_Dir Binary_Dir)
-set(GOOGLE_TEST_HEADERS_DIR "${Source_Dir}/googletest/include" CACHE INTERNAL "")
+externalproject_get_property(${GTEST_DEPENDENCY} Source_Dir Binary_Dir)
+set(GOOGLE_TEST_HEADERS_DIR "${Source_Dir}/${GTEST_DEPENDENCY}/include" CACHE INTERNAL "")
 include_directories(${GOOGLE_TEST_HEADERS_DIR})
 
 # export variables
