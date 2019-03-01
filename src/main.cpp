@@ -8,7 +8,7 @@ using namespace cpprobotparser;
 
 int main1(int, char**)
 {
-    RobotsTxtTokenizer tokenizer =
+    RobotsTxtTokenizer tokenizer(
         R"(
         Sitemap: www.example.com/sitemap.xml
 
@@ -38,7 +38,7 @@ int main1(int, char**)
         User-agent: Yandex
         Allow: *
         Clean-param: ref /some_dir/get_book.pl
-        )"_tokenizeRobotsTxt;
+        )");
 
     const std::string sitemapUrl = tokenizer.sitemapUrl();
 

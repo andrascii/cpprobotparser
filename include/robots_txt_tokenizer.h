@@ -1,14 +1,13 @@
 #pragma once
 
+#include "pimpl.h"
 #include "export_macro.h"
+#include "robots_txt_rules.h"
+#include "robots_txt_token.h"
+#include "well_known_user_agent.h"
 
 namespace cpprobotparser
 {
-
-enum class WellKnownUserAgent;
-enum class RobotsTxtToken;
-
-class RobotsTxtTokenizerImpl;
 
 //! Non thread-safe
 //! This tokenizer is used to only parse robots.txt file
@@ -19,7 +18,7 @@ public:
     RobotsTxtTokenizer();
     RobotsTxtTokenizer(const std::string& robotsTxtContent);
     RobotsTxtTokenizer(const RobotsTxtTokenizer& other);
-    RobotsTxtTokenizer(RobotsTxtTokenizer&& other) noexcept;
+    RobotsTxtTokenizer(RobotsTxtTokenizer&& other);
     ~RobotsTxtTokenizer();
 
     RobotsTxtTokenizer& operator=(const RobotsTxtTokenizer& other);
@@ -46,9 +45,8 @@ public:
     const std::string& originalHostMirrorUrl() const noexcept;
 
 private:
-    RobotsTxtTokenizerImpl* m_impl;
+    class RobotsTxtTokenizerImpl;
+    Pimpl<RobotsTxtTokenizerImpl> m_impl;
 };
 
 }
-
-cpprobotparser::RobotsTxtTokenizer operator "" _tokenizeRobotsTxt(const char* robotsTxtContent, std::size_t sz);

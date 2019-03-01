@@ -1,20 +1,22 @@
 #pragma once
 
+#include "pimpl.h"
 #include "export_macro.h"
+#include "robots_txt_rules.h"
+#include "well_known_user_agent.h"
 
 namespace cpprobotparser
 {
 
 enum class WellKnownUserAgent;
-class RobotsTxtRulesImpl;
 
 class CPPROBOTPARSER_EXPORT RobotsTxtRules final
 {
 public:
     RobotsTxtRules();
-    RobotsTxtRules(const std::string& robotsTxtContent);
     RobotsTxtRules(const RobotsTxtRules& other);
     RobotsTxtRules(RobotsTxtRules&& other);
+    RobotsTxtRules(const std::string& robotsTxtContent);
     ~RobotsTxtRules();
 
     RobotsTxtRules& operator=(const RobotsTxtRules& other);
@@ -36,7 +38,8 @@ public:
     std::vector<std::string> cleanParam(const std::string& userAgent) const;
 
 private:
-    RobotsTxtRulesImpl* m_impl;
+    class RobotsTxtRulesImpl;
+    Pimpl<RobotsTxtRulesImpl> m_impl;
 };
 
 }
