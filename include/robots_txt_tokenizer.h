@@ -1,6 +1,5 @@
 #pragma once
 
-#include "pimpl.h"
 #include "export_macro.h"
 #include "robots_txt_rules.h"
 #include "robots_txt_token.h"
@@ -12,7 +11,7 @@ namespace cpprobotparser
 //! Non thread-safe
 //! This tokenizer is used to only parse robots.txt file
 //! and provide you rules for each user agent occurred in the file.
-class CPPROBOTPARSER_EXPORT RobotsTxtTokenizer final
+class RobotsTxtTokenizer final
 {
 public:
     RobotsTxtTokenizer();
@@ -46,7 +45,7 @@ public:
 
 private:
     class RobotsTxtTokenizerImpl;
-    Pimpl<RobotsTxtTokenizerImpl> m_impl;
+    std::unique_ptr<RobotsTxtTokenizerImpl> m_impl;
 };
 
 }

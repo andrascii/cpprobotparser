@@ -210,10 +210,26 @@ RobotsTxtRules::RobotsTxtRules(const std::string& robotsTxtContent)
 }
 
 RobotsTxtRules::RobotsTxtRules() = default;
-RobotsTxtRules::RobotsTxtRules(const RobotsTxtRules& other) = default;
+
+RobotsTxtRules::RobotsTxtRules(const RobotsTxtRules& other)
+    : m_impl(std::make_unique<RobotsTxtRulesImpl>(*other.m_impl))
+{
+}
+
 RobotsTxtRules::RobotsTxtRules(RobotsTxtRules&& other) = default;
 RobotsTxtRules::~RobotsTxtRules() = default;
-RobotsTxtRules& RobotsTxtRules::operator=(const RobotsTxtRules& other) = default;
+
+RobotsTxtRules& RobotsTxtRules::operator=(const RobotsTxtRules& other)
+{
+    if (this == std::addressof(other))
+    {
+        return *this;
+    }
+
+    m_impl = std::make_unique<RobotsTxtRulesImpl>(*other.m_impl);
+    return *this;
+}
+
 RobotsTxtRules& RobotsTxtRules::operator=(RobotsTxtRules&& other) = default;
 
 void RobotsTxtRules::parse(const std::string& robotsTxtContent)

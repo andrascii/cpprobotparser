@@ -53,7 +53,7 @@ add_msvc_precompiled_header("stdafx.h" "src/stdafx.cpp" SOURCES_LIST)
 source_group("Precompiled Headers" FILES include/stdafx.h src/stdafx.cpp)
 
 add_library(
-	${CPPROBOTPARSER_LIBRARY} SHARED
+	${CPPROBOTPARSER_LIBRARY} STATIC
 	${SOURCES_LIST}
 	${HEADERS_LIST}
 )
