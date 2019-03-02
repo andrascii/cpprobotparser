@@ -31,16 +31,14 @@ enum class RobotsTxtToken
 ### Example
 
 ```cpp
-#include "robots_txt_tokenizer.h"
-#include "meta_robots_helpers.h"
-#include "well_known_user_agent.h"
-#include "robots_txt_token.h"
+#include <iostream>
+#include <cpprobotparser.hpp>
 
 using namespace cpprobotparser;
 
 int main(int, char**)
 {
-    RobotsTxtTokenizer tokenizer =
+    RobotsTxtTokenizer tokenizer(
         R"(
         Sitemap: www.example.com/sitemap.xml
 
@@ -70,7 +68,7 @@ int main(int, char**)
         User-agent: Yandex
         Allow: *
         Clean-param: ref /some_dir/get_book.pl
-        )"_tokenizeRobotsTxt;
+        )");
 
     const std::string sitemapUrl = tokenizer.sitemapUrl();
 
@@ -130,7 +128,7 @@ int main(int, char**)
         std::cout << "\n\n";
     }
 
-    std::cin.get();
+    return 0;
 }
 ```
 
