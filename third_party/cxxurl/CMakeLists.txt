@@ -27,9 +27,7 @@ message("Platform: " ${CMAKE_SYSTEM_NAME} "-" ${PLATFORM})
 set(HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/url.hpp)
 set(SOURCES ${HEADERS} ${CMAKE_CURRENT_SOURCE_DIR}/url.cpp)
 
-if(MSVC)
-    add_definitions(/MTd)
-endif(MSVC)
+configure_msvc_runtime()
 
 add_library(${CXX_URL_DEPENDENCY} STATIC ${SOURCES})
 set_target_properties(${CXX_URL_DEPENDENCY} PROPERTIES SOVERSION 1)

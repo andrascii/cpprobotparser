@@ -7,40 +7,14 @@
 
 cmake_minimum_required(VERSION 3.2)
 
+set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
+
+include(cmake/configure_msvc_runtime.cmake)
+include(cmake/add_msvc_precompiled_header.cmake)
+
 add_subdirectory(third_party)
 
 option(BUILD_TESTS "Build tests project" ON)
-
-###########################################################################
-macro(add_msvc_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar)
-
-	if(MSVC)
-        get_filename_component(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
-        
-    set(PrecompiledBinary "$(IntDir)/${PrecompiledBasename}.pch")
-    set(Sources ${${SourcesVar}})
-
-    set_source_files_properties(
-			${PrecompiledSource}
-			PROPERTIES COMPILE_FLAGS "/Yc\"${PrecompiledHeader}\" /Fp\"${PrecompiledBinary}\""
-			OBJECT_OUTPUTS "${PrecompiledBinary}"
-		)
-		
-		set_source_files_properties(
-				${Sources}
-        PROPERTIES COMPILE_FLAGS "/Yu\"${PrecompiledHeader}\" /FI\"${PrecompiledHeader}\" /Fp\"${PrecompiledBinary}\""
-        OBJECT_DEPENDS "${PrecompiledBinary}"
-		)  
-		
-    # Add precompiled header to SourcesVar
-    list(APPEND ${SourcesVar} ${PrecompiledSource})
-
-  endif(MSVC)
-
-endmacro(add_msvc_precompiled_header)
-###########################################################################
-
-set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
 
 set(CPPROBOTPARSER_LIBRARY cpprobotparser)
 project(${CPPROBOTPARSER_LIBRARY})
@@ -73,7 +47,6 @@ if(MSVC)
 		/Zi
 		/W4
 		/WX
-		/MTd
 	)
 	
 	set_target_properties(
@@ -90,6 +63,8 @@ set_target_properties(
 	PUBLIC_HEADER "robots_txt_token.h"
 	PUBLIC_HEADER "well_known_user_agent.h"
 )
+
+configure_msvc_runtime()
 
 include_directories(${INCLUDE_DIR} ${CXXURL_INCLUDE_DIR})
 target_link_libraries(${CPPROBOTPARSER_LIBRARY} ${THIRD_PARTY_CXX_URL})

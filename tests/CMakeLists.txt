@@ -28,7 +28,6 @@ if(MSVC)
 		/Zi
 		/W4
 		/WX
-		/MTd
 	)
 
 	add_custom_command(
