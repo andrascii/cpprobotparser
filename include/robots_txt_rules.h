@@ -1,5 +1,6 @@
 #pragma once
 
+#include "pimpl.h"
 #include "robots_txt_rules.h"
 #include "well_known_user_agent.h"
 
@@ -37,7 +38,7 @@ public:
 
 private:
     class RobotsTxtRulesImpl;
-    std::unique_ptr<RobotsTxtRulesImpl> m_impl;
+    Pimpl<RobotsTxtRulesImpl> m_impl;
 };
 
 }

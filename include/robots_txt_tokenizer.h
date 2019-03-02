@@ -1,5 +1,6 @@
 #pragma once
 
+#include "pimpl.h"
 #include "robots_txt_rules.h"
 #include "robots_txt_token.h"
 #include "well_known_user_agent.h"
@@ -44,7 +45,7 @@ public:
 
 private:
     class RobotsTxtTokenizerImpl;
-    std::unique_ptr<RobotsTxtTokenizerImpl> m_impl;
+    Pimpl<RobotsTxtTokenizerImpl> m_impl;
 };
 
 }

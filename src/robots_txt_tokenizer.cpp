@@ -217,26 +217,10 @@ RobotsTxtTokenizer::RobotsTxtTokenizer(const std::string& robotsTxtContent)
 }
 
 RobotsTxtTokenizer::RobotsTxtTokenizer() = default;
-
-RobotsTxtTokenizer::RobotsTxtTokenizer(const RobotsTxtTokenizer& other)
-    : m_impl(std::make_unique<RobotsTxtTokenizerImpl>(*other.m_impl))
-{
-}
-
+RobotsTxtTokenizer::RobotsTxtTokenizer(const RobotsTxtTokenizer& other) = default;
 RobotsTxtTokenizer::RobotsTxtTokenizer(RobotsTxtTokenizer&& other) = default;
 RobotsTxtTokenizer::~RobotsTxtTokenizer() = default;
-
-RobotsTxtTokenizer& RobotsTxtTokenizer::operator=(const RobotsTxtTokenizer& other)
-{
-    if (this == std::addressof(other))
-    {
-        return *this;
-    }
-
-    m_impl = std::make_unique<RobotsTxtTokenizerImpl>(*other.m_impl);
-    return *this;
-}
-
+RobotsTxtTokenizer& RobotsTxtTokenizer::operator=(const RobotsTxtTokenizer& other) = default;
 RobotsTxtTokenizer& RobotsTxtTokenizer::operator=(RobotsTxtTokenizer&& other) = default;
 
 bool RobotsTxtTokenizer::isValid() const noexcept

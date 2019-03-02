@@ -1,5 +1,7 @@
 macro(add_msvc_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar)
 
+    list(REMOVE_ITEM ${SourcesVar} src/stdafx.cpp)
+
 	if(MSVC)
         get_filename_component(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
         

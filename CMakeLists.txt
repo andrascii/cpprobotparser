@@ -26,10 +26,7 @@ set(CXXURL_INCLUDE_DIR "./third_party/cxxurl/")
 aux_source_directory(${SOURCES_DIR} SOURCES_LIST)
 file(GLOB_RECURSE HEADERS_LIST "include/*.h")
 
-# work with precompiled headers in MSVC
-list(REMOVE_ITEM SOURCES_LIST src/stdafx.cpp)
 add_msvc_precompiled_header("stdafx.h" "src/stdafx.cpp" SOURCES_LIST)
-
 source_group("Precompiled Headers" FILES include/stdafx.h src/stdafx.cpp)
 
 add_library(
@@ -61,7 +58,12 @@ set_target_properties(
 	PUBLIC_HEADER "robots_txt_rules.h"
 	PUBLIC_HEADER "robots_txt_tokenizer.h"
 	PUBLIC_HEADER "robots_txt_token.h"
-	PUBLIC_HEADER "well_known_user_agent.h"
+    PUBLIC_HEADER "well_known_user_agent.h"
+)
+
+set_target_properties(
+	${CPPROBOTPARSER_LIBRARY}
+	PROPERTIES SOVERSION 1
 )
 
 configure_msvc_runtime()
@@ -73,11 +75,13 @@ target_link_libraries(${CPPROBOTPARSER_LIBRARY} ${THIRD_PARTY_CXX_URL})
 set(CPPROBOTPARSER_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" CACHE INTERNAL "")
 set(CPPROBOTPARSER_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}" CACHE INTERNAL "")
 
-# debug output
-message("==== ${CPPROBOTPARSER_LIBRARY} debug info:")
+# configuration data output
+message("==== ${CPPROBOTPARSER_LIBRARY} configuration data output:")
 message("==== CPPROBOTPARSER_INCLUDE_DIR: ${CPPROBOTPARSER_INCLUDE_DIR}")
 message("==== CPPROBOTPARSER_BINARY_DIR: ${CPPROBOTPARSER_BINARY_DIR}")
 message("==== CPPROBOTPARSER_LIBRARY: ${CPPROBOTPARSER_LIBRARY}")
+message("==== CMAKE_CXX_FLAGS_DEBUG: ${CMAKE_CXX_FLAGS_DEBUG}")
+message("==== CMAKE_CXX_FLAGS_RELEASE: ${CMAKE_CXX_FLAGS_RELEASE}")
 
 if(BUILD_TESTS)
     add_subdirectory(tests)
