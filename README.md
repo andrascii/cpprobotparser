@@ -1,7 +1,7 @@
 # cpprobotparser
 This module represents the robots.txt parser written in C++, which answers questions about whether or not a particular user agent can fetch a URL on the Web site that published the robots.txt file. For more details on the structure of robots.txt files, see http://www.robotstxt.org/orig.html.
 
-## RobotsTxtTokenizer
+## How to tokenize the robots.txt file
 
 [`robots_txt_tokenizer.h`](https://github.com/andrascii/cpprobotparser/blob/master/include/robots_txt_tokenizer.h) - this tokenizer is used to only parse robots.txt file and provide you rules for each user agent occurred in the file.
 
@@ -164,4 +164,68 @@ Clean-param: ref /some_dir/get_book.pl
 
 Tokens for *:
 Crawl-delay: 2.0
+```
+
+## Example Of Incorporating Into An Existing CMake Project Using MSVC
+
+Assume that we have a project which consists of one `src` folder:
+
+```cmake
+cmake_minimum_required(VERSION 3.2)
+
+include(ExternalProject)
+
+# we will link cpprobotparser with a dynamic runtime C++ version of library
+# in order to avoid link errors
+set(MSVC_RUNTIME dynamic)
+
+externalproject_add(cpprobotparser
+    GIT_REPOSITORY https://github.com/andrascii/cpprobotparser
+    GIT_TAG master
+    SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/cpprobotparser-src"
+    BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/cpprobotparser-build"
+    CMAKE_ARGS -DBUILD_TESTS=OFF -DMSVC_RUNTIME=${MSVC_RUNTIME}
+	INSTALL_COMMAND ""
+	UPDATE_COMMAND ""
+)
+
+externalproject_get_property(cpprobotparser Source_Dir Binary_Dir)
+
+# Path to the single `cpprobotparser.hpp` header file
+set(CPPROBOTPARSER_INCLUDE_DIR "${Source_Dir}/single_include")
+
+# Path to the debug binary directory created by default of microsoft compiler
+set(CPPROBOTPARSER_DEBUG_BINARY_DIR "${Binary_Dir}/Debug")
+
+# Path to the release binary directory created by default of microsoft compiler
+set(CPPROBOTPARSER_RELEASE_BINARY_DIR "${Binary_Dir}/Release")
+
+set(TEST_PROJECT testproject)
+project(${TEST_PROJECT})
+
+set(SOURCES_DIR src)
+
+# collect sources and headers of our main project
+aux_source_directory(${SOURCES_DIR} SOURCES_LIST)
+file(GLOB_RECURSE HEADERS_LIST "src/*.h")
+
+add_executable(
+	${TEST_PROJECT}
+	${SOURCES_LIST}
+	${HEADERS_LIST}
+)
+
+set(CMAKE_CXX_STANDARD 17)
+
+include_directories(${INCLUDE_DIR} ${CPPROBOTPARSER_INCLUDE_DIR})
+
+# firstly we will build the cpprobotparser
+add_dependencies(${TEST_PROJECT} cpprobotparser)
+
+# finally link our project with a cpprobotparser.lib
+target_link_libraries(${TEST_PROJECT}
+    "$<$<CONFIG:Debug>:${CPPROBOTPARSER_DEBUG_BINARY_DIR}/cpprobotparser.lib>" # for debug version
+    "$<$<CONFIG:Release>:${CPPROBOTPARSER_RELEASE_BINARY_DIR}/cpprobotparser.lib>" # for release version
+)
+
 ```
