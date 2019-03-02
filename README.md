@@ -183,8 +183,8 @@ externalproject_add(cpprobotparser
     SOURCE_DIR "${CMAKE_CURRENT_BINARY_DIR}/cpprobotparser-src"
     BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/cpprobotparser-build"
     CMAKE_ARGS -DBUILD_TESTS=OFF -DMSVC_RUNTIME=${MSVC_RUNTIME}
-	INSTALL_COMMAND ""
-	UPDATE_COMMAND ""
+    INSTALL_COMMAND ""
+    UPDATE_COMMAND ""
 )
 
 externalproject_get_property(cpprobotparser Source_Dir Binary_Dir)
