@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.2)
 set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
 
+add_subdirectory(googletest)
+set(GTEST ${GTEST_DEPENDENCY} CACHE INTERNAL "")
+
 set(TESTS tests)
 project(${TESTS})
 
@@ -39,7 +42,7 @@ if(MSVC)
 endif()
 
 include_directories(${GOOGLE_TEST_HEADERS_DIR} ${CPPROBOTPARSER_INCLUDE_DIR})
-add_dependencies(${TESTS} ${CPPROBOTPARSER_LIBRARY} ${THIRD_PARTY_GTEST})
+add_dependencies(${TESTS} ${CPPROBOTPARSER_LIBRARY} ${GTEST})
 
 target_link_libraries(${TESTS}
 	${CPPROBOTPARSER_LIBRARY}

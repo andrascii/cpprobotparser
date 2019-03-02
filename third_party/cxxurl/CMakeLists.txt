@@ -24,12 +24,8 @@ endif()
 
 message("Platform: " ${CMAKE_SYSTEM_NAME} "-" ${PLATFORM})
 
-set(HEADERS
-        ${CMAKE_CURRENT_SOURCE_DIR}/url.hpp)
-
-set(SOURCES
-        ${HEADERS}
-        ${CMAKE_CURRENT_SOURCE_DIR}/url.cpp)
+set(HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/url.hpp)
+set(SOURCES ${HEADERS} ${CMAKE_CURRENT_SOURCE_DIR}/url.cpp)
 
 if(MSVC)
     add_definitions(/MTd)

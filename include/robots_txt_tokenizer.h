@@ -1,6 +1,5 @@
 #pragma once
 
-#include "export_macro.h"
 #include "robots_txt_rules.h"
 #include "robots_txt_token.h"
 #include "well_known_user_agent.h"

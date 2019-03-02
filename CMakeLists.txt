@@ -9,10 +9,14 @@ cmake_minimum_required(VERSION 3.2)
 
 add_subdirectory(third_party)
 
+option(BUILD_TESTS "Build tests project" ON)
+
 ###########################################################################
 macro(add_msvc_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar)
+
 	if(MSVC)
-		get_filename_component(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
+        get_filename_component(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
+        
     set(PrecompiledBinary "$(IntDir)/${PrecompiledBasename}.pch")
     set(Sources ${${SourcesVar}})
 
@@ -30,7 +34,9 @@ macro(add_msvc_precompiled_header PrecompiledHeader PrecompiledSource SourcesVar
 		
     # Add precompiled header to SourcesVar
     list(APPEND ${SourcesVar} ${PrecompiledSource})
+
   endif(MSVC)
+
 endmacro(add_msvc_precompiled_header)
 ###########################################################################
 
@@ -98,4 +104,6 @@ message("==== CPPROBOTPARSER_INCLUDE_DIR: ${CPPROBOTPARSER_INCLUDE_DIR}")
 message("==== CPPROBOTPARSER_BINARY_DIR: ${CPPROBOTPARSER_BINARY_DIR}")
 message("==== CPPROBOTPARSER_LIBRARY: ${CPPROBOTPARSER_LIBRARY}")
 
-add_subdirectory(tests)
+if(BUILD_TESTS)
+    add_subdirectory(tests)
+endif()
