@@ -3,7 +3,7 @@ This module represents the robots.txt parser written in C++, which answers quest
 
 ## How to determine which URLs are allowed?
 
-The library is exported [`RobotsTxtRules`](https://github.com/andrascii/cpprobotparser/blob/master/include/robots_txt_rules.h).
+For this purpose the library is exported [`RobotsTxtRules`](https://github.com/andrascii/cpprobotparser/blob/master/include/robots_txt_rules.h).
 Below is the example of using `RobotsTxtRules`.
 
 ### Example
@@ -57,33 +57,6 @@ The URL: http://example.com/index.php is allowed
 The URL: http://example.com/oembedB is not allowed
 The URL: http://example.com/folder1/folder2/commits/article.php?author is not allowed
 The URL: http://example.com/1/2/blob/master is allowed
-```
-
-## How to tokenize the robots.txt file
-
-[`robots_txt_tokenizer.h`](https://github.com/andrascii/cpprobotparser/blob/master/include/robots_txt_tokenizer.h) - this tokenizer is used to only parse robots.txt file and provide you rules for each user agent occurred in the file.
-
-Using `tokenValues` method it can give the value of any token taken from this enumeration [`robots_txt_token.h`](https://github.com/andrascii/cpprobotparser/blob/master/include/robots_txt_token.h):
-
-```cpp
-namespace cpprobotparser
-{
-
-enum class RobotsTxtToken
-{
-    TokenUserAgent,
-    TokenAllow,
-    TokenDisallow,
-    TokenSitemap,
-    TokenHost,
-    TokenCrawlDelay,
-    TokenCleanParam,
-    TokenCommentary,
-    TokenStringDelimeter,
-    TokenUnknown
-};
-
-}
 ```
 
 ## Example Of Incorporating Into An Existing CMake Project Using MSVC
