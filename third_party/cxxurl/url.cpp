@@ -295,14 +295,14 @@ std::string normalize_IPv6(const char *s, const char *e) {
     // Decode the fields
     std::uint16_t fields[8];
     size_t null_pos=8, null_len=0, nfields=0;
-    for(size_t i=0; i<ntokens; ++i) {
-        const char *p=tokens[i];
-        if (p==tokens[i+1] || *p==':')
-            null_pos=i;
+    for(size_t j=0; j<ntokens; ++j) {
+        const char *pointer=tokens[j];
+        if (pointer==tokens[j +1] || *pointer==':')
+            null_pos= j;
         else {
-            std::uint16_t field=get_hex_digit(*p++);
-            while (p!=tokens[i+1] && *p!=':')
-                field=(field<<4)|get_hex_digit(*p++);
+            std::uint16_t field=get_hex_digit(*pointer++);
+            while (pointer!=tokens[j +1] && *pointer!=':')
+                field=(field<<4)|get_hex_digit(*pointer++);
             fields[nfields++]=field;
         }
     }
@@ -597,7 +597,7 @@ Url &Url::host(const std::string& h, std::uint8_t ip_v) {
     lazy_parse();
     std::string o;
     if (h.empty())
-        ip_v=-1;
+        ip_v=std::numeric_limits<std::uint8_t>::max();
     else if (is_ipv4(h)) {
         if (!is_valid_ipv4(h))
             throw Url::parse_error("Invalid IPv4 address '"+h+"'");

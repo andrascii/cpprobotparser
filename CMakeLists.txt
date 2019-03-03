@@ -28,8 +28,15 @@ set(CXXURL_INCLUDE_DIR "./third_party/cxxurl/")
 aux_source_directory(${SOURCES_DIR} SOURCES_LIST)
 file(GLOB_RECURSE HEADERS_LIST "include/*.h")
 
+list(APPEND SOURCES_LIST ${CXXURL_SOURCES_LIST})
+list(APPEND HEADERS_LIST ${CXXURL_HEADERS_LIST})
+
 add_msvc_precompiled_header("stdafx.h" "src/stdafx.cpp" SOURCES_LIST)
 source_group("Precompiled Headers" FILES include/stdafx.h src/stdafx.cpp)
+
+message(STATUS "==== CXXURL_HEADERS_LIST: ${CXXURL_HEADERS_LIST}")
+message(STATUS "==== CXXURL_SOURCES_LIST: ${CXXURL_SOURCES_LIST}")
+source_group("cxxurl" FILES ${CXXURL_HEADERS_LIST} ${CXXURL_SOURCES_LIST})
 
 if (BUILD_AS_SHARED)
 
@@ -79,7 +86,7 @@ endif()
 configure_msvc_runtime()
 
 include_directories(${INCLUDE_DIR} ${CXXURL_INCLUDE_DIR})
-target_link_libraries(${CPPROBOTPARSER_LIBRARY} ${THIRD_PARTY_CXX_URL})
+target_link_libraries(${CPPROBOTPARSER_LIBRARY})
 
 # set additional export variables
 set(CPPROBOTPARSER_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" CACHE INTERNAL "")
