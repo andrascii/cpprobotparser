@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 namespace cpprobotparser
 {
@@ -28,17 +28,17 @@ public:
     static void trim(std::string& source);
     static std::string trimmed(const std::string& source);
 
-    static StringList splitString(
+    static StringList split(
         const std::string& source,
         const std::regex& regularExpression,
         SplitBehavior behavior);
 
-    static StringList splitString(
+    static StringList split(
         const std::string& source,
         const std::function<bool(char)>& separatePredicate,
         SplitBehavior behavior);
 
-    static StringList splitString(
+    static StringList split(
         const std::string& source,
         const std::string& sep,
         SplitBehavior behavior,

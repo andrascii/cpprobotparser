@@ -1,4 +1,4 @@
-#include "robots_txt_tokenizer.h"
+﻿#include "robots_txt_tokenizer.h"
 #include "robots_txt_token.h"
 #include "string_helpers.h"
 #include "meta_robots_helpers.h"
@@ -56,7 +56,7 @@ public:
     void tokenize(const std::string& robotsTxtContent)
     {
         StringHelpers::StringList rows = removeCommentaries(
-            StringHelpers::splitString(robotsTxtContent, [](char ch) { return ch == '\n'; }, StringHelpers::SkipEmptyParts));
+            StringHelpers::split(robotsTxtContent, [](char ch) { return ch == '\n'; }, StringHelpers::SkipEmptyParts));
 
         WellKnownUserAgent userAgentType = WellKnownUserAgent::AllRobots;
 

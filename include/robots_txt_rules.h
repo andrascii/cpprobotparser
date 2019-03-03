@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "pimpl.h"
 #include "export_macro.h"
@@ -7,8 +7,6 @@
 
 namespace cpprobotparser
 {
-
-enum class WellKnownUserAgent;
 
 class CPPROBOTPARSER_EXPORT RobotsTxtRules final
 {
@@ -26,6 +24,8 @@ public:
     void parse(const std::string& robotsTxtContent);
 
     //! Returns true if passed URL is allowed to crawl for the specified user agent
+    //! Note: if you test some URL for example for GoogleBot user agent but robots.txt content
+    //! does not contain any rules for Google then it will analyze rules for all robots (rules under this user agent: *)
     bool isUrlAllowed(const std::string& url, WellKnownUserAgent userAgent) const;
     bool isUrlAllowed(const std::string& url, const std::string& userAgent) const;
 

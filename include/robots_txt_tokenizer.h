@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "pimpl.h"
 #include "export_macro.h"

@@ -1,4 +1,4 @@
-#include <gtest/gtest.h>
+﻿#include <gtest/gtest.h>
 #include <string>
 #include <vector>
 #include "robots_txt_token.h"
@@ -31,7 +31,7 @@ const std::string s_testData(R"(
 
 }
 
-TEST(TokenizerTests, ParseSiteMapTest)
+TEST(TokenizerTests, ParseSiteMap)
 {
     RobotsTxtTokenizer tokenizer(s_testData);
     const std::string sitemapUrl = tokenizer.sitemapUrl();
@@ -39,7 +39,7 @@ TEST(TokenizerTests, ParseSiteMapTest)
     EXPECT_EQ(sitemapUrl, std::string_view("www.example.com/sitemap.xml"));
 }
 
-TEST(TokenizerTests, ParseCleanParamTokensTest)
+TEST(TokenizerTests, ParseCleanParamTokens)
 {
     RobotsTxtTokenizer tokenizer(s_testData);
 
@@ -54,7 +54,7 @@ TEST(TokenizerTests, ParseCleanParamTokensTest)
     EXPECT_EQ(googleBotCleanParams.empty(), true);
 }
 
-TEST(TokenizerTests, ParseAllowTokensTest)
+TEST(TokenizerTests, ParseAllowTokens)
 {
     RobotsTxtTokenizer tokenizer(s_testData);
 

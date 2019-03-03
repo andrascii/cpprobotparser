@@ -1,4 +1,4 @@
- #include "robots_txt_rules.h"
+﻿#include "robots_txt_rules.h"
 #include "robots_txt_token.h"
 #include "robots_txt_tokenizer.h"
 #include "meta_robots_helpers.h"
@@ -10,6 +10,19 @@ namespace cpprobotparser
 
 class RobotsTxtRules::RobotsTxtRulesImpl final
 {
+private:
+    struct TokenValue
+    {
+        TokenValue(RobotsTxtToken tokenType, const std::string& tokenValue)
+            : type(tokenType)
+            , value(tokenValue)
+        {
+        }
+
+        RobotsTxtToken type;
+        std::string value;
+    };
+
 public:
     void parse(const std::string& robotsTxtContent)
     {
@@ -44,32 +57,11 @@ public:
         const Url::Query query = cleanedUrl.query();
         const std::string urlPath = cleanedUrl.path() + (query.empty() ? std::string() : std::string("?") + makeQueryString(query));
 
-        struct TokenValue
+        std::vector<TokenValue> tokens = allowAndDisallowTokensFor(userAgent);
+
+        if (tokens.empty())
         {
-            TokenValue(RobotsTxtToken tokenType, const std::string& tokenValue)
-                : type(tokenType)
-                , value(tokenValue)
-            {
-            }
-
-            RobotsTxtToken type;
-            std::string value;
-        };
-
-        std::vector<TokenValue> tokens;
-
-        {
-            std::vector<std::string> allowTokens = m_tokenizer.tokenValues(userAgent, RobotsTxtToken::TokenAllow);
-            std::vector<std::string> disallowTokens = m_tokenizer.tokenValues(userAgent, RobotsTxtToken::TokenDisallow);
-
-            for (const std::string& disallowTokenValue : allowTokens)
-            {
-                tokens.emplace_back(RobotsTxtToken::TokenAllow, disallowTokenValue);
-            }
-            for (const std::string& disallowTokenValue : disallowTokens)
-            {
-                tokens.emplace_back(RobotsTxtToken::TokenDisallow, disallowTokenValue);
-            }
+            tokens = allowAndDisallowTokensFor(MetaRobotsHelpers::userAgentString(WellKnownUserAgent::AllRobots));
         }
 
         std::vector<std::pair<int, bool>> allowDisallowResults;
@@ -144,7 +136,7 @@ private:
         const bool patternContainsStar = cannonicalPattern.find("*") != std::string::npos;
         const bool patternContainsDollar = dollarIndex != std::string::npos;
 
-        const int nestingPatternLevel = static_cast<int>(StringHelpers::splitString(
+        const int nestingPatternLevel = static_cast<int>(StringHelpers::split(
             cannonicalPattern,
             "/",
             StringHelpers::SkipEmptyParts,
@@ -161,7 +153,7 @@ private:
             return std::make_pair(false, nestingPatternLevel);
         }
 
-        StringHelpers::StringList parts = StringHelpers::splitString(
+        StringHelpers::StringList parts = StringHelpers::split(
             cannonicalPattern, "*", StringHelpers::SkipEmptyParts, StringHelpers::CaseSensitive);
 
         std::string::size_type index = 0;
@@ -182,7 +174,7 @@ private:
             if (i == 0 || StringHelpers::startsWith(cannonicalPattern, "*"))
             {
                 matched = strongMatch ?
-                    StringHelpers::endsWith(cannonicalValue, parts[i]) :
+                    StringHelpers::endsWith(cannonicalValue, parts[i], StringHelpers::CaseInsensitive) :
                     cannonicalValue.find(parts[i]) != std::string::npos;
 
                 if (!matched)
@@ -211,6 +203,25 @@ private:
         }
 
         return std::make_pair(matched, nestingPatternLevel);
+    }
+
+    std::vector<TokenValue> allowAndDisallowTokensFor(const std::string& userAgent) const
+    {
+        std::vector<std::string> allowTokens = m_tokenizer.tokenValues(userAgent, RobotsTxtToken::TokenAllow);
+        std::vector<std::string> disallowTokens = m_tokenizer.tokenValues(userAgent, RobotsTxtToken::TokenDisallow);
+
+        std::vector<TokenValue> tokens;
+
+        for (const std::string& disallowTokenValue : allowTokens)
+        {
+            tokens.emplace_back(RobotsTxtToken::TokenAllow, disallowTokenValue);
+        }
+        for (const std::string& disallowTokenValue : disallowTokens)
+        {
+            tokens.emplace_back(RobotsTxtToken::TokenDisallow, disallowTokenValue);
+        }
+
+        return tokens;
     }
 
 private:

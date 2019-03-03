@@ -1,4 +1,4 @@
-#include "string_helpers.h"
+﻿#include "string_helpers.h"
 
 namespace
 {
@@ -82,7 +82,7 @@ std::string StringHelpers::trimmed(const std::string& source)
 }
 
 StringHelpers::StringList
-StringHelpers::splitString(
+StringHelpers::split(
     const std::string& source,
     const std::string& sep,
     SplitBehavior behavior,
@@ -100,7 +100,7 @@ StringHelpers::splitString(
 }
 
 StringHelpers::StringList
-StringHelpers::splitString(
+StringHelpers::split(
     const std::string& source,
     const std::regex& regularExpression,
     SplitBehavior behavior)
@@ -128,7 +128,7 @@ StringHelpers::splitString(
 }
 
 StringHelpers::StringList
-StringHelpers::splitString(
+StringHelpers::split(
     const std::string& source,
     const std::function<bool(char)>& separatePredicate,
     SplitBehavior behavior)
@@ -245,7 +245,7 @@ bool StringHelpers::endsWith(const std::string& source, const std::string& subst
         return endsWithHelper(toLower(source), toLower(substring));
     }
 
-    return endsWithHelper(toLower(source), toLower(substring));
+    return endsWithHelper(source, substring);
 }
 
 bool StringHelpers::startsWithHelper(const std::string& source, const std::string& substring)
@@ -255,7 +255,7 @@ bool StringHelpers::startsWithHelper(const std::string& source, const std::strin
 
 bool StringHelpers::endsWithHelper(const std::string& source, const std::string& substring)
 {
-    return source.find(substring) == source.size() - substring.size();
+    return source.rfind(substring) == source.size() - substring.size();
 }
 
 }
