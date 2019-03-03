@@ -1,6 +1,64 @@
 # cpprobotparser
 This module represents the robots.txt parser written in C++, which answers questions about whether or not a particular user agent can fetch a URL on the Web site that published the robots.txt file. For more details on the structure of robots.txt files, see http://www.robotstxt.org/orig.html.
 
+## How to determine which URLs are allowed?
+
+The library is exported [`RobotsTxtRules`](https://github.com/andrascii/cpprobotparser/blob/master/include/robots_txt_rules.h)
+Below is the example of using `RobotsTxtRules`
+
+### Example
+
+```cpp
+#include <iostream>
+#include <cpprobotparser.hpp>
+
+using namespace cpprobotparser;
+
+int main(int, char**)
+{
+    const RobotsTxtRules rules(R"(
+        Sitemap: www.example.com/sitemap.xml
+
+        User-agent: Googlebot
+
+        Disallow: /oembedB
+        Disallow: /*/forks
+        Disallow: /*/*/commits/*/*
+        Disallow: /*/*/commits/*?author
+        Disallow: /*/*/commits/*?path
+
+        Allow: /*/*/tree/master
+        Allow: /*/*/blob/master)");
+
+    const std::vector<std::string> urlToCheck
+    {
+        "http://example.com/index.php",
+        "http://example.com/oembedB",
+        "http://example.com/folder1/folder2/commits/article.php?author",
+        "http://example.com/1/2/blob/master"
+    };
+
+    std::cout << "Rules for GoogleBot:\n";
+
+    for (const std::string& url : urlToCheck)
+    {
+        const bool isAllowed = rules.isUrlAllowed(url, WellKnownUserAgent::GoogleBot);
+        std::cout << "The URL: " << url << (isAllowed ? " is allowed" : " is not allowed") << "\n";
+    }
+
+    return 0;
+}
+```
+
+#### Result
+```
+Rules for GoogleBot:
+The URL: http://example.com/index.php is allowed
+The URL: http://example.com/oembedB is not allowed
+The URL: http://example.com/folder1/folder2/commits/article.php?author is not allowed
+The URL: http://example.com/1/2/blob/master is allowed
+```
+
 ## How to tokenize the robots.txt file
 
 [`robots_txt_tokenizer.h`](https://github.com/andrascii/cpprobotparser/blob/master/include/robots_txt_tokenizer.h) - this tokenizer is used to only parse robots.txt file and provide you rules for each user agent occurred in the file.
@@ -26,142 +84,6 @@ enum class RobotsTxtToken
 };
 
 }
-```
-
-### Example
-
-```cpp
-#include <iostream>
-#include <cpprobotparser.hpp>
-
-using namespace cpprobotparser;
-
-int main(int, char**)
-{
-    RobotsTxtTokenizer tokenizer(
-        R"(
-        Sitemap: www.example.com/sitemap.xml
-
-        User-agent: *
-        Crawl-delay: 2.0
-
-        User-agent: Googlebot
-
-        Disallow: /oembed
-        Disallow: /*/forks
-        Disallow: /*/stars
-        Disallow: /*/download
-        Disallow: /*/revisions
-        Disallow: /*/*/issues/new
-        Disallow: /*/*/issues/search
-        Disallow: /*/*/commits/*/*
-        Disallow: /*/*/commits/*?author
-        Disallow: /*/*/commits/*?path
-        Disallow: /*/*/branches
-        Disallow: /*/*/tags
-        Disallow: /*/*/contributors
-        Disallow: /*/*/comments
-
-        Allow: /*/*/tree/master
-        Allow: /*/*/blob/master
-
-        User-agent: Yandex
-        Allow: *
-        Clean-param: ref /some_dir/get_book.pl
-        )");
-
-    const std::string sitemapUrl = tokenizer.sitemapUrl();
-
-    std::cout << "Site map URL: " << (sitemapUrl.empty() ? "None" : sitemapUrl) << "\n\n";
-
-    const std::vector<WellKnownUserAgent> wellKnownUserAgents =
-        MetaRobotsHelpers::wellKnownUserAgents();
-
-    for (WellKnownUserAgent wellKnownUserAgent : wellKnownUserAgents)
-    {
-        const std::vector<std::string> allowTokens =
-            tokenizer.tokenValues(wellKnownUserAgent, RobotsTxtToken::TokenAllow);
-
-        const std::vector<std::string> disallowTokens =
-            tokenizer.tokenValues(wellKnownUserAgent, RobotsTxtToken::TokenDisallow);
-
-        const std::vector<std::string> cleanParamTokens =
-            tokenizer.tokenValues(wellKnownUserAgent, RobotsTxtToken::TokenCleanParam);
-
-        const std::vector<std::string> crawlDelayTokens =
-            tokenizer.tokenValues(wellKnownUserAgent, RobotsTxtToken::TokenCrawlDelay);
-
-        if (allowTokens.empty() &&
-            disallowTokens.empty() &&
-            cleanParamTokens.empty() &&
-            crawlDelayTokens.empty())
-        {
-            continue;
-        }
-
-        std::cout << "Tokens for " << MetaRobotsHelpers::userAgentString(wellKnownUserAgent) << ": \n";
-
-        // print all allow tokens
-        for (const std::string& allowTokenValue : allowTokens)
-        {
-            std::cout << "Allow: " << allowTokenValue << "\n";
-        }
-
-        // print all disallow tokens
-        for (const std::string& disallowTokenValue : disallowTokens)
-        {
-            std::cout << "Disallow: " << disallowTokenValue << "\n";
-        }
-
-        // print all clean-param tokens
-        for (const std::string& cleanParamTokenValue : cleanParamTokens)
-        {
-            std::cout << "Clean-param: " << cleanParamTokenValue << "\n";
-        }
-
-        // print all crawl-delay tokens
-        for (const std::string& crawlDelayTokenValue : crawlDelayTokens)
-        {
-            std::cout << "Crawl-delay: " << crawlDelayTokenValue << "\n";
-        }
-
-        std::cout << "\n\n";
-    }
-
-    return 0;
-}
-```
-
-#### Result
-```
-Site map URL: www.example.com/sitemap.xml
-
-Tokens for googlebot:
-Allow: /*/*/tree/master
-Allow: /*/*/blob/master
-Disallow: /oembed
-Disallow: /*/forks
-Disallow: /*/stars
-Disallow: /*/download
-Disallow: /*/revisions
-Disallow: /*/*/issues/new
-Disallow: /*/*/issues/search
-Disallow: /*/*/commits/*/*
-Disallow: /*/*/commits/*?author
-Disallow: /*/*/commits/*?path
-Disallow: /*/*/branches
-Disallow: /*/*/tags
-Disallow: /*/*/contributors
-Disallow: /*/*/comments
-
-
-Tokens for yandex:
-Allow: *
-Clean-param: ref /some_dir/get_book.pl
-
-
-Tokens for *:
-Crawl-delay: 2.0
 ```
 
 ## Example Of Incorporating Into An Existing CMake Project Using MSVC
