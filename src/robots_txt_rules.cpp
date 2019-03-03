@@ -1,4 +1,4 @@
-#include "robots_txt_rules.h"
+ #include "robots_txt_rules.h"
 #include "robots_txt_token.h"
 #include "robots_txt_tokenizer.h"
 #include "meta_robots_helpers.h"
@@ -72,17 +72,26 @@ public:
             }
         }
 
-        bool allowed = true;
+        std::vector<std::pair<int, bool>> allowDisallowResults;
 
         for (const TokenValue& token : tokens)
         {
-            if (patternMatched(token.value, urlPath))
+            const std::pair<bool, int> result = patternMatched(token.value, urlPath);
+
+            if (result.first)
             {
-                allowed = token.type == RobotsTxtToken::TokenAllow ? true : false;
+                const bool isAllowed = token.type == RobotsTxtToken::TokenAllow ? true : false;
+                allowDisallowResults.push_back(std::make_pair(result.second, isAllowed));
             }
         }
 
-        return allowed;
+        std::sort(allowDisallowResults.begin(), allowDisallowResults.end(), [](const auto& lhs, const auto& rhs)
+        {
+            return lhs.first > rhs.first;
+        });
+
+        // if URL is not matched to any pattern then we treat this as an allowed URL
+        return allowDisallowResults.empty() ? true : allowDisallowResults.front().second;
     }
 
     double crawlDelay(WellKnownUserAgent userAgent) const
@@ -125,7 +134,8 @@ public:
     }
 
 private:
-    bool patternMatched(const std::string& pattern, const std::string& value) const
+    // returns true if the value matches the pattern and folder nesting level
+    std::pair<bool, int> patternMatched(const std::string& pattern, const std::string& value) const
     {
         const std::string cannonicalPattern = StringHelpers::toLower(pattern);
         const std::string cannonicalValue = StringHelpers::toLower(value);
@@ -134,15 +144,21 @@ private:
         const bool patternContainsStar = cannonicalPattern.find("*") != std::string::npos;
         const bool patternContainsDollar = dollarIndex != std::string::npos;
 
+        const int nestingPatternLevel = static_cast<int>(StringHelpers::splitString(
+            cannonicalPattern,
+            "/",
+            StringHelpers::SkipEmptyParts,
+            StringHelpers::CaseSensitive).size());
+
         if (!patternContainsStar && !patternContainsDollar)
         {
-            return StringHelpers::startsWith(cannonicalValue, cannonicalPattern);
+            return std::make_pair(StringHelpers::startsWith(cannonicalValue, cannonicalPattern), nestingPatternLevel);
         }
 
         if (patternContainsDollar && dollarIndex != cannonicalPattern.size() - 1)
         {
             // bad pattern
-            return false;
+            return std::make_pair(false, nestingPatternLevel);
         }
 
         StringHelpers::StringList parts = StringHelpers::splitString(
@@ -194,7 +210,7 @@ private:
             index = matchedIndex + parts[i].size();
         }
 
-        return matched;
+        return std::make_pair(matched, nestingPatternLevel);
     }
 
 private:

@@ -5,10 +5,9 @@
 
 using namespace cpprobotparser;
 
-namespace
+TEST(RulesTests, isAllowedTest)
 {
-
-const std::string s_testData(R"(
+    const std::string testData(R"(
         Sitemap: www.example.com/sitemap.xml
 
         User-agent: *
@@ -41,11 +40,7 @@ const std::string s_testData(R"(
         Clean-param: ref /some_dir/get_book.pl
         )");
 
-}
-
-TEST(RulesTests, isAllowedTest)
-{
-    RobotsTxtRules rules(s_testData);
+    RobotsTxtRules rules(testData);
 
     EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/catalog", WellKnownUserAgent::YandexBot), false);
     EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/catalog/auto", WellKnownUserAgent::YandexBot), true);
