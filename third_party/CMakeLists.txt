@@ -1,19 +1,8 @@
 unset(SOURCES_LIST)
 unset(HEADERS_LIST)
 
-#aux_source_directory(cxxurl SOURCES_LIST)
 file(GLOB_RECURSE SOURCES_LIST "cxxurl/*.cpp")
 file(GLOB_RECURSE HEADERS_LIST "cxxurl/*.hpp")
-
-#foreach(FILEPATH IN ITEMS ${SOURCES_LIST_WITH_PATH})
-#    get_filename_component(FILENAME "${FILEPATH}" NAME)
-#    list(APPEND SOURCES_LIST ${FILENAME})
-#endforeach()
-
-#foreach(FILEPATH IN ITEMS ${HEADERS_LIST_WITH_PATH})
-#    get_filename_component(FILENAME "${FILEPATH}" NAME)
-#    list(APPEND HEADERS_LIST ${FILENAME})
-#endforeach()
 
 set(CXXURL_SOURCES_LIST ${SOURCES_LIST} CACHE INTERNAL "")
 set(CXXURL_HEADERS_LIST ${HEADERS_LIST} CACHE INTERNAL "")

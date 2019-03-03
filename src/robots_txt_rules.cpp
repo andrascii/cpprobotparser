@@ -78,9 +78,9 @@ public:
         }
 
         std::sort(allowDisallowResults.begin(), allowDisallowResults.end(), [](const auto& lhs, const auto& rhs)
-        {
-            return lhs.first > rhs.first;
-        });
+            {
+                return lhs.first > rhs.first;
+            });
 
         // if URL is not matched to any pattern then we treat this as an allowed URL
         return allowDisallowResults.empty() ? true : allowDisallowResults.front().second;
@@ -123,6 +123,21 @@ public:
     std::vector<std::string> cleanParam(const std::string& userAgent) const
     {
         return m_tokenizer.tokenValues(userAgent, RobotsTxtToken::TokenCleanParam);
+    }
+
+    bool hasRulesFor(WellKnownUserAgent userAgent) const
+    {
+        return m_tokenizer.hasUserAgentRecord(userAgent);
+    }
+
+    bool hasRulesFor(const std::string& userAgent) const
+    {
+        return m_tokenizer.hasUserAgentRecord(userAgent);
+    }
+
+    const std::string& sitemapUrl() const noexcept
+    {
+        return m_tokenizer.sitemapUrl();
     }
 
 private:
@@ -276,6 +291,21 @@ std::vector<std::string> RobotsTxtRules::cleanParam(WellKnownUserAgent userAgent
 std::vector<std::string> RobotsTxtRules::cleanParam(const std::string& userAgent) const
 {
     return m_impl->cleanParam(userAgent);
+}
+
+bool RobotsTxtRules::hasRulesFor(WellKnownUserAgent userAgent) const
+{
+    return m_impl->hasRulesFor(userAgent);
+}
+
+bool RobotsTxtRules::hasRulesFor(const std::string& userAgent) const
+{
+    return m_impl->hasRulesFor(userAgent);
+}
+
+const std::string& RobotsTxtRules::sitemapUrl() const noexcept
+{
+    return m_impl->sitemapUrl();
 }
 
 }

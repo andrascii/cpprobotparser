@@ -36,6 +36,13 @@ public:
     std::vector<std::string> cleanParam(WellKnownUserAgent userAgent) const;
     std::vector<std::string> cleanParam(const std::string& userAgent) const;
 
+    //! returns true if passed user agent is found in the robots.txt, otherwise returns false
+    bool hasRulesFor(WellKnownUserAgent userAgent) const;
+    bool hasRulesFor(const std::string& userAgent) const;
+
+    //! returns the URL to the sitemap if it exists in the robots.txt file
+    const std::string& sitemapUrl() const noexcept;
+
 private:
     class RobotsTxtRulesImpl;
     Pimpl<RobotsTxtRulesImpl> m_impl;
