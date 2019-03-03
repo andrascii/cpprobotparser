@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pimpl.h"
+#include "export_macro.h"
 #include "robots_txt_rules.h"
 #include "well_known_user_agent.h"
 
@@ -9,7 +10,7 @@ namespace cpprobotparser
 
 enum class WellKnownUserAgent;
 
-class RobotsTxtRules final
+class CPPROBOTPARSER_EXPORT RobotsTxtRules final
 {
 public:
     RobotsTxtRules();

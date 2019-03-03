@@ -1,10 +1,12 @@
 #pragma once
 
+#include "export_macro.h"
+
 namespace cpprobotparser
 {
 
 template <typename T>
-class Pimpl final
+class CPPROBOTPARSER_EXPORT Pimpl final
 {
 public:
     Pimpl()

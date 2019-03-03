@@ -14,7 +14,16 @@ include(cmake/add_msvc_precompiled_header.cmake)
 
 add_subdirectory(third_party)
 
-option(BUILD_TESTS "Build tests project" ON)
+option(BUILD_TESTS "Build 'tests' project" ON)
+option(BUILD_AS_SHARED "Forces building cpprobotparser library as dynamic load library" OFF)
+option(USE_DYNAMIC_CXX_RUNTIME "Forces building cpprobotparser with the dynamic C++ runtime library" OFF)
+
+if (USE_DYNAMIC_CXX_RUNTIME)
+    
+    # this variable is used by configure_msvc_runtime() to configure the C++ runtime version
+    set(MSVC_RUNTIME dynamic CACHE INTERNAL "" FORCE)
+
+endif()
 
 set(CPPROBOTPARSER_LIBRARY cpprobotparser)
 project(${CPPROBOTPARSER_LIBRARY})
@@ -29,15 +38,37 @@ file(GLOB_RECURSE HEADERS_LIST "include/*.h")
 add_msvc_precompiled_header("stdafx.h" "src/stdafx.cpp" SOURCES_LIST)
 source_group("Precompiled Headers" FILES include/stdafx.h src/stdafx.cpp)
 
-add_library(
-	${CPPROBOTPARSER_LIBRARY} STATIC
-	${SOURCES_LIST}
-	${HEADERS_LIST}
-)
+if (BUILD_AS_SHARED)
+
+    add_library(
+        ${CPPROBOTPARSER_LIBRARY} SHARED
+        ${SOURCES_LIST}
+        ${HEADERS_LIST}
+    )
+
+    if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+        set(CPPROBOTPARSER_BIN_EXTENSION dll)
+    endif()
+
+else()
+
+    add_library(
+        ${CPPROBOTPARSER_LIBRARY} STATIC
+        ${SOURCES_LIST}
+        ${HEADERS_LIST}
+    )
+
+    if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+        set(CPPROBOTPARSER_BIN_EXTENSION lib)
+    endif()
+
+    add_definitions(-D${CPPROBOTPARSER_LIBRARY}_STATIC)
+
+endif()
 
 set(CMAKE_CXX_STANDARD 17)
 
-if(MSVC)
+if (MSVC)
 	add_definitions(
 		/EHsc
 		/MP
@@ -52,20 +83,6 @@ if(MSVC)
 	)
 endif()
 
-set_target_properties(
-	${CPPROBOTPARSER_LIBRARY}
-	PROPERTIES
-	PUBLIC_HEADER "robots_txt_rules.h"
-	PUBLIC_HEADER "robots_txt_tokenizer.h"
-	PUBLIC_HEADER "robots_txt_token.h"
-    PUBLIC_HEADER "well_known_user_agent.h"
-)
-
-set_target_properties(
-	${CPPROBOTPARSER_LIBRARY}
-	PROPERTIES SOVERSION 1
-)
-
 configure_msvc_runtime()
 
 include_directories(${INCLUDE_DIR} ${CXXURL_INCLUDE_DIR})
@@ -76,13 +93,14 @@ set(CPPROBOTPARSER_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include" CACHE INTER
 set(CPPROBOTPARSER_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}" CACHE INTERNAL "")
 
 # configuration data output
-message("==== ${CPPROBOTPARSER_LIBRARY} configuration data output:")
-message("==== CPPROBOTPARSER_INCLUDE_DIR: ${CPPROBOTPARSER_INCLUDE_DIR}")
-message("==== CPPROBOTPARSER_BINARY_DIR: ${CPPROBOTPARSER_BINARY_DIR}")
-message("==== CPPROBOTPARSER_LIBRARY: ${CPPROBOTPARSER_LIBRARY}")
-message("==== CMAKE_CXX_FLAGS_DEBUG: ${CMAKE_CXX_FLAGS_DEBUG}")
-message("==== CMAKE_CXX_FLAGS_RELEASE: ${CMAKE_CXX_FLAGS_RELEASE}")
+message("=======================${CPPROBOTPARSER_LIBRARY}================================")
+message(STATUS "==== CPPROBOTPARSER_INCLUDE_DIR: ${CPPROBOTPARSER_INCLUDE_DIR}")
+message(STATUS "==== CPPROBOTPARSER_BINARY_DIR: ${CPPROBOTPARSER_BINARY_DIR}")
+message(STATUS "==== CPPROBOTPARSER_LIBRARY: ${CPPROBOTPARSER_LIBRARY}")
+message(STATUS "==== CMAKE_CXX_FLAGS_DEBUG: ${CMAKE_CXX_FLAGS_DEBUG}")
+message(STATUS "==== CMAKE_CXX_FLAGS_RELEASE: ${CMAKE_CXX_FLAGS_RELEASE}")
+message("================================================================================")
 
-if(BUILD_TESTS)
+if (BUILD_TESTS)
     add_subdirectory(tests)
 endif()

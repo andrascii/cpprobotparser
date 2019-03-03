@@ -2,26 +2,28 @@ macro(configure_msvc_runtime)
 
     if(MSVC)
         # Default to statically-linked runtime.
-        if("${MSVC_RUNTIME}" STREQUAL "")
+        if (NOT USE_DYNAMIC_CXX_RUNTIME)
             set(MSVC_RUNTIME "static")
+        else()
+        set(MSVC_RUNTIME "dynamic")
         endif()
 
         # Set compiler options.
         set(variables
-        CMAKE_C_FLAGS_DEBUG
-        CMAKE_C_FLAGS_MINSIZEREL
-        CMAKE_C_FLAGS_RELEASE
-        CMAKE_C_FLAGS_RELWITHDEBINFO
-        CMAKE_CXX_FLAGS_DEBUG
-        CMAKE_CXX_FLAGS_MINSIZEREL
-        CMAKE_CXX_FLAGS_RELEASE
-        CMAKE_CXX_FLAGS_RELWITHDEBINFO
+            CMAKE_C_FLAGS_DEBUG
+            CMAKE_C_FLAGS_MINSIZEREL
+            CMAKE_C_FLAGS_RELEASE
+            CMAKE_C_FLAGS_RELWITHDEBINFO
+            CMAKE_CXX_FLAGS_DEBUG
+            CMAKE_CXX_FLAGS_MINSIZEREL
+            CMAKE_CXX_FLAGS_RELEASE
+            CMAKE_CXX_FLAGS_RELWITHDEBINFO
         )
 
-        if(${MSVC_RUNTIME} STREQUAL "static")
+        if (${MSVC_RUNTIME} STREQUAL "static")
             message(STATUS "MSVC -> forcing use of statically-linked runtime.")
             foreach(variable ${variables})
-                if(${variable} MATCHES "/MD")
+                if (${variable} MATCHES "/MD")
                     string(REGEX REPLACE "/MD" "/MT" ${variable} "${${variable}}")
                 endif()
             endforeach()
@@ -29,11 +31,10 @@ macro(configure_msvc_runtime)
             message(STATUS "MSVC -> forcing use of dynamically-linked runtime.")
 
             foreach(variable ${variables})
-                if(${variable} MATCHES "/MT")
+                if (${variable} MATCHES "/MT")
                     string(REGEX REPLACE "/MT" "/MD" ${variable} "${${variable}}")
                 endif()
             endforeach()
-
         endif()
     endif()
 
