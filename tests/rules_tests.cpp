@@ -17,18 +17,10 @@ TEST(RulesTests, isAllowedTest)
 
         Disallow: /oembed
         Disallow: /*/forks
-        Disallow: /*/stars
-        Disallow: /*/download
-        Disallow: /*/revisions
         Disallow: /*/*/issues/new
-        Disallow: /*/*/issues/search
         Disallow: /*/*/commits/*/*
         Disallow: /*/*/commits/*?author
-        Disallow: /*/*/commits/*?path
-        Disallow: /*/*/branches
-        Disallow: /*/*/tags
-        Disallow: /*/*/contributors
-        Disallow: /*/*/comments
+        Disallow: /*/*/blob
 
         Allow: /*/*/tree/master
         Allow: /*/*/blob/master
@@ -42,8 +34,54 @@ TEST(RulesTests, isAllowedTest)
 
     RobotsTxtRules rules(testData);
 
+    // Rules for Yandex
+
+    // must be disallowed
     EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/catalog", WellKnownUserAgent::YandexBot), false);
-    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/catalog/auto", WellKnownUserAgent::YandexBot), true);
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/catalog/", WellKnownUserAgent::YandexBot), false);
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/catalog/1", WellKnownUserAgent::YandexBot), false);
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/catalog/1/2/3/4/5", WellKnownUserAgent::YandexBot), false);
+
+    // must be allowed
     EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/", WellKnownUserAgent::YandexBot), true);
-    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/index/folder/issues/new/", WellKnownUserAgent::GoogleBot), false);
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/catalog/auto", WellKnownUserAgent::YandexBot), true);
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/catalog/auto/", WellKnownUserAgent::YandexBot), true);
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/catalog/auto/1", WellKnownUserAgent::YandexBot), true);
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/catalog/auto/1/2/3/4/5", WellKnownUserAgent::YandexBot), true);
+
+    // Rules for Google
+
+    // must be disallowed
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/oembed", WellKnownUserAgent::GoogleBot), false);
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/oembed/", WellKnownUserAgent::GoogleBot), false);
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/oembed/something_else", WellKnownUserAgent::GoogleBot), false);
+
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/1/forks", WellKnownUserAgent::GoogleBot), false);
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/1/forks/", WellKnownUserAgent::GoogleBot), false);
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/1/forks/2", WellKnownUserAgent::GoogleBot), false);
+
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/1/2/issues/new", WellKnownUserAgent::GoogleBot), false);
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/1/2/issues/new/", WellKnownUserAgent::GoogleBot), false);
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/1/2/issues/new/3/4/5", WellKnownUserAgent::GoogleBot), false);
+
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/1/2/commits/3/4", WellKnownUserAgent::GoogleBot), false);
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/1/2/commits/3/4/", WellKnownUserAgent::GoogleBot), false);
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/1/2/commits/3/4/5", WellKnownUserAgent::GoogleBot), false);
+
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/1/2/commits/mypage1.php?author", WellKnownUserAgent::GoogleBot), false);
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/1/2/commits/mypage2.php?author", WellKnownUserAgent::GoogleBot), false);
+
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/1/2/blob", WellKnownUserAgent::GoogleBot), false);
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/1/2/blob/3/4", WellKnownUserAgent::GoogleBot), false);
+
+    // must be allowed
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/1/2/commits/3", WellKnownUserAgent::GoogleBot), true);
+
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/1/commits/mypage2.php?author", WellKnownUserAgent::GoogleBot), true);
+
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/1/2/blob/master", WellKnownUserAgent::GoogleBot), true);
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/1/2/blob/master/3/4", WellKnownUserAgent::GoogleBot), true);
+
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/1/2/tree/master", WellKnownUserAgent::GoogleBot), true);
+    EXPECT_EQ(rules.isUrlAllowed("http://www.example.com/1/2/tree/master/3/4", WellKnownUserAgent::GoogleBot), true);
 }
