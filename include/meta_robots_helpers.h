@@ -1,12 +1,14 @@
 #pragma once
 
+#include "export_macro.h"
+
 namespace cpprobotparser
 {
 
 enum class WellKnownUserAgent;
 class RobotsTxtTokenizer;
 
-class MetaRobotsHelpers
+class CPPROBOTPARSER_EXPORT MetaRobotsHelpers
 {
 public:
     static WellKnownUserAgent userAgent(const std::string& userAgentStr);

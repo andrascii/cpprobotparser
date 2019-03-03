@@ -18,13 +18,6 @@ option(BUILD_TESTS "Build 'tests' project" ON)
 option(BUILD_AS_SHARED "Forces building cpprobotparser library as dynamic load library" OFF)
 option(USE_DYNAMIC_CXX_RUNTIME "Forces building cpprobotparser with the dynamic C++ runtime library" OFF)
 
-if (USE_DYNAMIC_CXX_RUNTIME)
-    
-    # this variable is used by configure_msvc_runtime() to configure the C++ runtime version
-    set(MSVC_RUNTIME dynamic CACHE INTERNAL "" FORCE)
-
-endif()
-
 set(CPPROBOTPARSER_LIBRARY cpprobotparser)
 project(${CPPROBOTPARSER_LIBRARY})
 
