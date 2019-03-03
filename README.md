@@ -3,8 +3,8 @@ This module represents the robots.txt parser written in C++, which answers quest
 
 ## How to determine which URLs are allowed?
 
-The library is exported [`RobotsTxtRules`](https://github.com/andrascii/cpprobotparser/blob/master/include/robots_txt_rules.h)
-Below is the example of using `RobotsTxtRules`
+The library is exported [`RobotsTxtRules`](https://github.com/andrascii/cpprobotparser/blob/master/include/robots_txt_rules.h).
+Below is the example of using `RobotsTxtRules`.
 
 ### Example
 
