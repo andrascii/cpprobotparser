@@ -35,11 +35,6 @@ public:
 
     static StringList split(
         const std::string& source,
-        const std::function<bool(char)>& separatePredicate,
-        SplitBehavior behavior);
-
-    static StringList split(
-        const std::string& source,
         const std::string& sep,
         SplitBehavior behavior,
         CaseSensitivity cs = CaseSensitive);
@@ -48,14 +43,9 @@ public:
     static bool endsWith(const std::string& source, const std::string& substring, CaseSensitivity cs = CaseSensitive);
 
 private:
-    static StringList findHelper(
+    static StringList splitHelper(
         const std::string& source,
         const std::string& sep,
-        SplitBehavior behavior);
-
-    static StringList findHelper(
-        const std::string& source,
-        const std::function<bool(char)>& separatePredicate,
         SplitBehavior behavior);
 
     static std::pair<size_t, size_t> spaceStringBounds(

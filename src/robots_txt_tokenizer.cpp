@@ -56,7 +56,7 @@ public:
     void tokenize(const std::string& robotsTxtContent)
     {
         StringHelpers::StringList rows = removeCommentaries(
-            StringHelpers::split(robotsTxtContent, [](char ch) { return ch == '\n'; }, StringHelpers::SkipEmptyParts));
+            StringHelpers::split(robotsTxtContent, std::regex("\\n|\\r\\n|\\n\\r|\\r"), StringHelpers::SkipEmptyParts));
 
         WellKnownUserAgent userAgentType = WellKnownUserAgent::AllRobots;
 

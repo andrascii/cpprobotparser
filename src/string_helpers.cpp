@@ -93,10 +93,10 @@ StringHelpers::split(
         const std::string copy = toLower(source);
         const std::string copySep = toLower(sep);
 
-        return findHelper(copy, copySep, behavior);
+        return splitHelper(copy, copySep, behavior);
     }
 
-    return findHelper(source, sep, behavior);
+    return splitHelper(source, sep, behavior);
 }
 
 StringHelpers::StringList
@@ -105,18 +105,14 @@ StringHelpers::split(
     const std::regex& regularExpression,
     SplitBehavior behavior)
 {
-    //
-    // TODO: don't work
-    //
     StringList list;
-    std::smatch match;
 
-    if (std::regex_search(source, match, regularExpression))
+    std::sregex_token_iterator tokenIterator(source.begin(), source.end(), regularExpression, -1);
+    std::sregex_token_iterator end;
+
+    for (; tokenIterator != end; ++tokenIterator)
     {
-        for (const std::ssub_match& subMatch : match)
-        {
-            list.push_back(subMatch);
-        }
+        list.push_back(*tokenIterator);
     }
 
     if (behavior == SkipEmptyParts)
@@ -128,16 +124,7 @@ StringHelpers::split(
 }
 
 StringHelpers::StringList
-StringHelpers::split(
-    const std::string& source,
-    const std::function<bool(char)>& separatePredicate,
-    SplitBehavior behavior)
-{
-    return findHelper(source, separatePredicate, behavior);
-}
-
-StringHelpers::StringList
-StringHelpers::findHelper(
+StringHelpers::splitHelper(
     const std::string& source,
     const std::string& sep,
     SplitBehavior behavior)
@@ -164,37 +151,6 @@ StringHelpers::findHelper(
     if (start != source.size() || behavior == SplitBehavior::KeepEmptyParts)
     {
         list.push_back(source.substr(start, static_cast<Offset>(-1)));
-    }
-
-    return list;
-}
-
-StringHelpers::StringList
-StringHelpers::findHelper(
-    const std::string& source,
-    const std::function<bool(char)>& separatePredicate,
-    SplitBehavior behavior)
-{
-    using Offset = std::string::size_type;
-
-    StringList list;
-
-    auto start = source.begin();
-    auto end = source.end();
-
-    while ((end = std::find_if(start, source.end(), separatePredicate)) != source.end())
-    {
-        if (start != end || behavior == SplitBehavior::KeepEmptyParts)
-        {
-            list.push_back(std::string(start, end));
-        }
-
-        start = end + 1;
-    }
-
-    if (start != source.end() || behavior == SplitBehavior::KeepEmptyParts)
-    {
-        list.push_back(std::string(start, source.end()));
     }
 
     return list;
