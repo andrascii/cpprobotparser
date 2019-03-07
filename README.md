@@ -68,10 +68,6 @@ cmake_minimum_required(VERSION 3.2)
 
 include(ExternalProject)
 
-# we will link cpprobotparser with a dynamic runtime C++ version of library
-# in order to avoid link errors
-set(MSVC_RUNTIME dynamic)
-
 externalproject_add(cpprobotparser
     GIT_REPOSITORY https://github.com/andrascii/cpprobotparser
     GIT_TAG master
