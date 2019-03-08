@@ -10,3 +10,7 @@ build_command_prepend: "mkdir build ; cd build ; cmake .. ; cd .."
 build_command: "make -C build"
 env:
   - COMPILER=clang++-3.6
+addons:
+  apt:
+    packages:
+    - cmake
