@@ -43,10 +43,20 @@ endif()
 include_directories(${GTEST_HEADERS_DIR} ${CPPROBOTPARSER_INCLUDE_DIR})
 add_dependencies(${TESTS} ${CPPROBOTPARSER_LIBRARY} ${GTEST})
 
-target_link_libraries(${TESTS}
-	${CPPROBOTPARSER_LIBRARY}
-	"$<$<CONFIG:Debug>:${GTEST_DEBUG_PATH}/gtestd.lib>"
-	"$<$<CONFIG:Debug>:${GTEST_DEBUG_PATH}/gtest_maind.lib>"
-	"$<$<CONFIG:Release>:${GTEST_RELEASE_PATH}/gtest.lib>"
-	"$<$<CONFIG:Release>:${GTEST_RELEASE_PATH}/gtest_main.lib>"
-)
+if(UNIX)
+	target_link_libraries(${TESTS}
+		${CPPROBOTPARSER_LIBRARY}
+		"$<$<CONFIG:Debug>:${GTEST_DEBUG_PATH}/libgtestd.a>"
+		"$<$<CONFIG:Debug>:${GTEST_DEBUG_PATH}/libgtest_maind.a>"
+		"$<$<CONFIG:Release>:${GTEST_RELEASE_PATH}/libgtest.a>"
+		"$<$<CONFIG:Release>:${GTEST_RELEASE_PATH}/libgtest_main.a>"
+	)
+else()
+	target_link_libraries(${TESTS}
+		${CPPROBOTPARSER_LIBRARY}
+		"$<$<CONFIG:Debug>:${GTEST_DEBUG_PATH}/gtestd.lib>"
+		"$<$<CONFIG:Debug>:${GTEST_DEBUG_PATH}/gtest_maind.lib>"
+		"$<$<CONFIG:Release>:${GTEST_RELEASE_PATH}/gtest.lib>"
+		"$<$<CONFIG:Release>:${GTEST_RELEASE_PATH}/gtest_main.lib>"
+	)
+endif()

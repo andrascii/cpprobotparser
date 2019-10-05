@@ -8,9 +8,11 @@
 cmake_minimum_required(VERSION 3.2)
 
 set(CMAKE_SYSTEM_VERSION 7.0 CACHE TYPE INTERNAL FORCE)
+set(CMAKE_CXX_STANDARD 17)
 
 include(cmake/configure_msvc_runtime.cmake)
 include(cmake/add_msvc_precompiled_header.cmake)
+include(cmake/cotire.cmake)
 
 add_subdirectory(third_party)
 
@@ -48,6 +50,8 @@ if (BUILD_AS_SHARED)
 
     if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
         set(CPPROBOTPARSER_BIN_EXTENSION dll)
+    else()
+        set(CPPROBOTPARSER_BIN_EXTENSION so)
     endif()
 
 else()
@@ -60,6 +64,8 @@ else()
 
     if (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
         set(CPPROBOTPARSER_BIN_EXTENSION lib)
+    else()
+        set(CPPROBOTPARSER_BIN_EXTENSION a)
     endif()
 
     add_definitions(-D${CPPROBOTPARSER_LIBRARY}_STATIC)
@@ -103,4 +109,9 @@ message("=======================================================================
 
 if (BUILD_TESTS)
     add_subdirectory(tests)
+endif()
+
+if(NOT WIN32)
+	set_target_properties(${CPPROBOTPARSER_LIBRARY} PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "include/stdafx.h")
+	cotire(${CPPROBOTPARSER_LIBRARY})
 endif()
