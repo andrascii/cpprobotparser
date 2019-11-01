@@ -14,7 +14,7 @@ include(cmake/configure_msvc_runtime.cmake)
 include(cmake/add_msvc_precompiled_header.cmake)
 include(cmake/cotire.cmake)
 
-add_subdirectory(third_party)
+#add_subdirectory(third_party)
 
 option(BUILD_TESTS "Build 'tests' project" ON)
 option(BUILD_AS_SHARED "Forces building cpprobotparser library as dynamic load library" OFF)
@@ -80,7 +80,7 @@ if (MSVC)
 		/W4
 		/WX
 	)
-	
+
 	set_target_properties(
 		${CPPROBOTPARSER_LIBRARY}
 		PROPERTIES COMPILE_FLAGS "/FI\"stdafx.h\""
@@ -107,7 +107,7 @@ message(STATUS "==== CMAKE_CXX_FLAGS_RELEASE: ${CMAKE_CXX_FLAGS_RELEASE}")
 message("================================================================================")
 
 if (BUILD_TESTS)
-    add_subdirectory(tests)
+#    add_subdirectory(tests)
 endif()
 
 if(NOT WIN32)
